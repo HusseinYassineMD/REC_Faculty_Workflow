@@ -10,12 +10,21 @@ const stub = path.join(root, "src/server/rec-actions.stub.ts");
 const reportsPage = path.join(root, "src/app/reports/page.tsx");
 const reportsPageBak = path.join(root, "src/app/reports/page.tsx.bak");
 const reportsPageStatic = path.join(root, "src/app/reports/page.static.tsx");
+const reportApi = path.join(root, "src/app/api/report/route.ts");
+const reportApiBak = path.join(root, "src/app/api/report/route.ts.bak");
 
 async function main() {
   await rename(real, bak);
   await copyFile(stub, real);
   await rename(reportsPage, reportsPageBak);
   await copyFile(reportsPageStatic, reportsPage);
+  let hadApi = false;
+  try {
+    await rename(reportApi, reportApiBak);
+    hadApi = true;
+  } catch {
+    /* no api route */
+  }
   try {
     execSync("GITHUB_PAGES=true next build", { cwd: root, stdio: "inherit" });
   } finally {
@@ -23,6 +32,7 @@ async function main() {
     await rename(reportsPageBak, reportsPage);
     await unlink(real);
     await rename(bak, real);
+    if (hadApi) await rename(reportApiBak, reportApi);
   }
 }
 

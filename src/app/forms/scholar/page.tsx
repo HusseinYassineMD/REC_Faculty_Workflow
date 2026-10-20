@@ -1,9 +1,14 @@
-import EditableScholarForm from "./EditableScholarForm";
+import { isStaticSite } from "@/lib/rec-data-demo";
 
-export default function ScholarFormPage({
+export default async function ScholarFormPage({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
-  return <EditableScholarForm searchParams={searchParams} />;
+  if (isStaticSite) {
+    const Preview = (await import("./PreviewScholarForm")).default;
+    return <Preview />;
+  }
+  const Editable = (await import("./EditableScholarForm")).default;
+  return <Editable searchParams={searchParams} />;
 }

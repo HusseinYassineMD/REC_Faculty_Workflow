@@ -5,7 +5,7 @@ export default function PreviewProgramForm() {
   return (
     <AppShell
       title="USC training programs (preview)"
-      subtitle="Form layout preview — editing is available in the local app only."
+      subtitle="Placeholder form — demo only on this site."
       activeHref="/forms/program"
     >
       <div className="form-shell">

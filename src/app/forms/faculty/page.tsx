@@ -1,9 +1,14 @@
-import EditableFacultyForm from "./EditableFacultyForm";
+import { isStaticSite } from "@/lib/rec-data-demo";
 
-export default function FacultyFormPage({
+export default async function FacultyFormPage({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
-  return <EditableFacultyForm searchParams={searchParams} />;
+  if (isStaticSite) {
+    const Preview = (await import("./PreviewFacultyForm")).default;
+    return <Preview />;
+  }
+  const Editable = (await import("./EditableFacultyForm")).default;
+  return <Editable searchParams={searchParams} />;
 }

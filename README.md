@@ -4,11 +4,9 @@ Next.js dashboard for REC scholars, trainees, faculty, and training programs —
 
 **Public repo:** https://github.com/HusseinYassineMD/REC_Faculty_Workflow  
 
-**Live app (full forms + saves):** https://rec-faculty-workflow.onrender.com/  
+**Shareable preview:** https://husseinyassinemd.github.io/REC_Faculty_Workflow/  
 
-(GitHub Pages URL redirects there.) The hosted app uses SQLite on a persistent disk and seeds from `src/data/demo-roster.json` on first boot. You can add and edit records in the browser.
-
-**Local dev:** same codebase with `data/rec_workflow.sqlite` on your machine (gitignored).
+Dashboard, reports, and RPPR views use demo data; intake forms are placeholders until we hook up a hosted database. **Local dev** (`npm run dev`) has full save/edit with SQLite.
 
 ## Run
 

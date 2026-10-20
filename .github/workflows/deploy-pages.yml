@@ -1,4 +1,4 @@
-name: GitHub Pages redirect to live app
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -14,37 +14,30 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
-env:
-  # Render web service URL (full app with SQLite). Update after first Render deploy if needed.
-  LIVE_APP_URL: https://rec-faculty-workflow.onrender.com
-
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Verify demo roster JSON is committed
+        run: test -f src/data/demo-roster.json
+      - name: Build static site
+        run: npm run build:pages
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Build redirect site
-        run: |
-          mkdir -p site/REC_Faculty_Workflow
-          cat > site/REC_Faculty_Workflow/index.html <<EOF
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8" />
-              <meta http-equiv="refresh" content="0; url=${LIVE_APP_URL}/" />
-              <link rel="canonical" href="${LIVE_APP_URL}/" />
-              <title>REC Faculty Workflow</title>
-            </head>
-            <body>
-              <p>Redirecting to the live app… <a href="${LIVE_APP_URL}/">${LIVE_APP_URL}/</a></p>
-            </body>
-          </html>
-          EOF
-          cp site/REC_Faculty_Workflow/index.html site/index.html
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
       - id: deployment
         uses: actions/deploy-pages@v4
