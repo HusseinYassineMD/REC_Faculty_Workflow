@@ -2,10 +2,16 @@
 
 Next.js dashboard for REC scholars, trainees, faculty, and training programs — with timeline fields for annual RPPR tables.
 
+**Public repo:** https://github.com/HusseinYassineMD/REC_Faculty_Workflow  
+
+This repository contains **application code only**. Roster data lives in local `data/rec_workflow.sqlite` (gitignored) on each machine — it is **not** published to GitHub.
+
 ## Run
 
 ```bash
-cd /Users/aishwaryajagadish/Desktop/CPBH/REC_Faculty_Workflow
+git clone https://github.com/HusseinYassineMD/REC_Faculty_Workflow.git
+cd REC_Faculty_Workflow
+npm install
 npm run dev
 ```
 
@@ -21,9 +27,10 @@ Open **http://127.0.0.1:8766/**
 | Timeline reports | `/reports` |
 | RPPR preview | `/rppr` |
 
-## Data
+## Data & privacy
 
-- **SQLite:** `data/rec_workflow.sqlite` (primary store)
-- **Export CSV / roster JSON:** buttons on the dashboard (optional file export for reporting)
+- **SQLite:** `data/rec_workflow.sqlite` — created on first run; optional seed from local REC CSVs if present
+- **Export:** dashboard buttons write CSV/JSON to your machine when you choose
+- **Do not commit** `.sqlite` files or exports containing real scholar/faculty names
 
 NACC reference: [Progress Reports to NIA](https://www.naccdata.org/progress-reports-to-nia/)
