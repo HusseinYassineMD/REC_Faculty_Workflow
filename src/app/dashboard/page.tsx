@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import AppShell from "@/components/AppShell";
+import SavedBanner from "@/components/SavedBanner";
 import {
   FacultyRecordCard,
   ProgramRecordCard,
@@ -7,19 +9,17 @@ import {
   SectionPanel,
 } from "@/components/RecordCards";
 import StatCard from "@/components/StatCard";
-import { exportCsvAction, syncDashboardAction } from "@/app/actions";
-import { getCounts, listFaculty, listPrograms, listScholars } from "@/lib/db";
+import { getCounts, isStaticSite, listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
 
-export default function DashboardPage({
-  searchParams,
-}: {
-  searchParams: { saved?: string };
-}) {
+export default async function DashboardPage() {
   const counts = getCounts();
   const scholars = listScholars();
   const faculty = listFaculty();
   const programs = listPrograms();
-  const saved = searchParams.saved;
+
+  const ExportActions = !isStaticSite
+    ? (await import("./DashboardExportActions")).default
+    : null;
 
   return (
     <AppShell
@@ -27,11 +27,9 @@ export default function DashboardPage({
       subtitle="Your REC roster in one place — capture, review, and export when reporting season arrives."
       activeHref="/dashboard"
     >
-      {saved ? (
-        <div className="mb-6 rounded-2xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-3 text-sm text-emerald-900 shadow-sm backdrop-blur-sm">
-          Saved: {saved.replace(/_/g, " ")}
-        </div>
-      ) : null}
+      <Suspense fallback={null}>
+        <SavedBanner />
+      </Suspense>
 
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Current scholars" value={counts.current_scholars} accent="gold" />
@@ -53,18 +51,7 @@ export default function DashboardPage({
         <Link href="/reports" className="btn-ghost">
           Timeline report →
         </Link>
-        <div className="ml-auto flex flex-wrap gap-2">
-          <form action={exportCsvAction}>
-            <button type="submit" className="btn-secondary">
-              Export CSV
-            </button>
-          </form>
-          <form action={syncDashboardAction}>
-            <button type="submit" className="btn-primary">
-              Rebuild roster JSON
-            </button>
-          </form>
-        </div>
+        {ExportActions ? <ExportActions /> : null}
       </div>
 
       <SectionPanel

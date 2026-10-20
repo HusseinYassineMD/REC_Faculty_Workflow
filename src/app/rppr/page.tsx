@@ -1,6 +1,6 @@
 import AppShell from "@/components/AppShell";
 import PrintButton from "@/components/PrintButton";
-import { listFaculty, listPrograms, listScholars } from "@/lib/db";
+import { listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
 
 export default function RpprPreviewPage() {
   const scholars = listScholars();

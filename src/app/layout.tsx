@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 
-export const dynamic = "force-dynamic";
-
 const source = Source_Sans_3({ subsets: ["latin"], variable: "--font-source" });
 const display = Playfair_Display({
   subsets: ["latin"],

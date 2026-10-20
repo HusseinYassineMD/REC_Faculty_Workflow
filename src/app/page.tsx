@@ -1,7 +1,7 @@
 import Link from "next/link";
 import AppShell from "@/components/AppShell";
 import StatCard from "@/components/StatCard";
-import { getCounts } from "@/lib/db";
+import { getCounts } from "@/lib/rec-data";
 
 export default function HomePage() {
   const counts = getCounts();

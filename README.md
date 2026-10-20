@@ -4,7 +4,9 @@ Next.js dashboard for REC scholars, trainees, faculty, and training programs —
 
 **Public repo:** https://github.com/HusseinYassineMD/REC_Faculty_Workflow  
 
-This repository contains **application code only**. Roster data lives in local `data/rec_workflow.sqlite` (gitignored) on each machine — it is **not** published to GitHub.
+**Live preview (read-only demo for reviewers):** https://husseinyassinemd.github.io/REC_Faculty_Workflow/  
+
+The GitHub Pages site shows the UI and a bundled demo roster. To add or edit records, run the app locally (below). Full roster data normally lives in `data/rec_workflow.sqlite` (gitignored) — it is **not** published to GitHub.
 
 ## Run
 
