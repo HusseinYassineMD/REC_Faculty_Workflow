@@ -43,3 +43,15 @@ export function listFaculty(): FacultyRow[] {
 export function listPrograms(): ProgramRow[] {
   return demo().programs;
 }
+
+export function getScholar(id: number): ScholarRow | undefined {
+  return demo().scholars.find((s) => s.id === id);
+}
+
+export function getFaculty(id: number): FacultyRow | undefined {
+  return demo().faculty.find((f) => f.id === id);
+}
+
+export function getProgram(id: number): ProgramRow | undefined {
+  return demo().programs.find((p) => p.id === id);
+}
