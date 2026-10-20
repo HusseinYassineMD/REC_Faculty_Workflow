@@ -4,6 +4,7 @@ import path from "path";
 import { CLINICAL_REC_DIR, DB_PATH } from "./paths";
 import { parseBool, parseCsv } from "./csv";
 import type { FacultyRow, ProgramRow, ScholarRow } from "./types";
+import { seedFromDemoJson } from "./seed-demo-json";
 
 let db: Database.Database | null = null;
 
@@ -20,7 +21,12 @@ function seedIfEmpty(database: Database.Database) {
     (database.prepare("SELECT COUNT(*) AS c FROM training_programs").get() as { c: number }).c;
   if (count > 0) return;
 
-  const faculty = parseCsv(path.join(CLINICAL_REC_DIR, "faculty.csv"));
+  if (seedFromDemoJson(database)) return;
+
+  const facultyCsv = path.join(CLINICAL_REC_DIR, "faculty.csv");
+  if (!fs.existsSync(facultyCsv)) return;
+
+  const faculty = parseCsv(facultyCsv);
   const programs = parseCsv(path.join(CLINICAL_REC_DIR, "training-programs.csv"));
   const scholars = parseCsv(path.join(CLINICAL_REC_DIR, "scholars-trainees.csv"));
 

@@ -8,7 +8,7 @@
     "build": "next build",
     "build:pages": "node scripts/build-pages.mjs",
     "export:demo-json": "node scripts/export-demo-json.mjs",
-    "start": "next start -p 8766 -H 127.0.0.1",
+    "start": "next start -p ${PORT:-8766} -H 0.0.0.0",
     "lint": "next lint"
   },
   "engines": {

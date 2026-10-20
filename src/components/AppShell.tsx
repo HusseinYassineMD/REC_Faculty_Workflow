@@ -1,5 +1,4 @@
 import Link from "next/link";
-import StaticSiteBanner from "@/components/StaticSiteBanner";
 import { LINKS } from "@/lib/paths";
 
 const nav = [
@@ -72,10 +71,7 @@ export default function AppShell({
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-4 pt-2 sm:px-6">
-        <StaticSiteBanner />
-        {children}
-      </main>
+      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-4 pt-2 sm:px-6">{children}</main>
 
       <footer className="relative mx-auto mt-10 max-w-6xl px-4 text-center text-xs text-slate-500 sm:px-6">
         REC faculty workflow ·{" "}

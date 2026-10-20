@@ -1,14 +1,9 @@
-import { isStaticSite } from "@/lib/rec-data";
+import EditableProgramForm from "./EditableProgramForm";
 
-export default async function ProgramFormPage({
+export default function ProgramFormPage({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
-  if (isStaticSite) {
-    const Preview = (await import("./PreviewProgramForm")).default;
-    return <Preview />;
-  }
-  const Editable = (await import("./EditableProgramForm")).default;
-  return <Editable searchParams={searchParams} />;
+  return <EditableProgramForm searchParams={searchParams} />;
 }

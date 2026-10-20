@@ -1,0 +1,17 @@
+# Full Next.js app with SQLite on a persistent disk (editable forms, saves).
+# Connect this repo in Render: New > Blueprint > this file.
+services:
+  - type: web
+    name: rec-faculty-workflow
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: rec-sqlite
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "8766"

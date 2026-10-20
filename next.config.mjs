@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const repo = "REC_Faculty_Workflow";
 const isPages = process.env.GITHUB_PAGES === "true";
+const standalone = process.env.STANDALONE === "1";
 
 const nextConfig = {
-  output: isPages ? "export" : undefined,
+  output: isPages ? "export" : standalone ? "standalone" : undefined,
   basePath: isPages ? `/${repo}` : "",
   assetPrefix: isPages ? `/${repo}/` : undefined,
   trailingSlash: true,
