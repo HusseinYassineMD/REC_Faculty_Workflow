@@ -12,6 +12,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_STATIC_SITE: isPages ? "1" : "0",
     NEXT_PUBLIC_BASE_PATH: isPages ? `/${repo}` : "",
+    NEXT_PUBLIC_DEPLOY_SHA: process.env.NEXT_PUBLIC_DEPLOY_SHA ?? "",
   },
   experimental: {
     serverComponentsExternalPackages: ["better-sqlite3"],

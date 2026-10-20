@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DeployVersionCheck from "@/components/DeployVersionCheck";
 import StaticSiteBanner from "@/components/StaticSiteBanner";
 import { LINKS } from "@/lib/paths";
 
@@ -73,6 +74,7 @@ export default function AppShell({
       </header>
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 pb-4 pt-2 sm:px-6">
+        <DeployVersionCheck />
         <StaticSiteBanner />
         {children}
       </main>

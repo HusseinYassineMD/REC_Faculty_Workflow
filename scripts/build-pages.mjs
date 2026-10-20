@@ -1,4 +1,4 @@
-import { copyFile, rename, unlink } from "fs/promises";
+import { copyFile, rename, unlink, writeFile, mkdir } from "fs/promises";
 import { execSync } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -25,8 +25,16 @@ async function main() {
   } catch {
     /* no api route */
   }
+  const sha =
+    process.env.GITHUB_SHA?.trim() ||
+    execSync("git rev-parse HEAD", { cwd: root, encoding: "utf-8" }).trim();
   try {
-    execSync("GITHUB_PAGES=true next build", { cwd: root, stdio: "inherit" });
+    execSync(`GITHUB_PAGES=true NEXT_PUBLIC_DEPLOY_SHA=${sha} next build`, {
+      cwd: root,
+      stdio: "inherit",
+    });
+    await mkdir(path.join(root, "out"), { recursive: true });
+    await writeFile(path.join(root, "out/deploy-version.txt"), `${sha}\n`);
   } finally {
     await unlink(reportsPage);
     await rename(reportsPageBak, reportsPage);

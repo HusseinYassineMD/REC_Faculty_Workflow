@@ -28,6 +28,8 @@ jobs:
         run: test -f src/data/demo-roster.json
       - name: Build static site
         run: npm run build:pages
+        env:
+          GITHUB_SHA: ${{ github.sha }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
