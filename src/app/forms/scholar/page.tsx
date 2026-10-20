@@ -1,14 +1,16 @@
-import { isStaticSite } from "@/lib/rec-data-demo";
+import { isStaticSite, listScholars } from "@/lib/rec-data-demo";
+import ScholarFormPreviewServer from "./ScholarFormPreviewServer";
+import EditableScholarForm from "./EditableScholarForm";
 
-export default async function ScholarFormPage({
+export default function ScholarFormPage({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
   if (isStaticSite) {
-    const Preview = (await import("./PreviewScholarForm")).default;
-    return <Preview />;
+    const row =
+      listScholars().find((s) => s.current_or_past === "Current") ?? listScholars()[0];
+    return <ScholarFormPreviewServer row={row} mode="new" />;
   }
-  const Editable = (await import("./EditableScholarForm")).default;
-  return <Editable searchParams={searchParams} />;
+  return <EditableScholarForm searchParams={searchParams} />;
 }

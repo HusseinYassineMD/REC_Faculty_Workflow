@@ -29,7 +29,7 @@ export function ScholarRecordCard({ s }: { s: ScholarRow }) {
             ) : null}
           </div>
         </div>
-        <EditLink href={`/forms/scholar?id=${s.id}`} />
+        <EditLink href={`/forms/scholar/${s.id}`} />
       </div>
       {s.research_area ? (
         <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{s.research_area}</p>
@@ -71,7 +71,7 @@ export function FacultyRecordCard({ f }: { f: FacultyRow }) {
           </h3>
           <p className="mt-1 text-sm text-slate-600">{f.title}</p>
         </div>
-        <EditLink href={`/forms/faculty?id=${f.id}`} />
+        <EditLink href={`/forms/faculty/${f.id}`} />
       </div>
       <span className="pill-gold w-fit">{f.theme || "Theme TBD"}</span>
       <p className="text-sm text-slate-600">{f.institution_department}</p>
@@ -89,7 +89,7 @@ export function ProgramRecordCard({ p }: { p: ProgramRow }) {
         <h3 className="font-display text-lg font-semibold leading-snug text-cpbh-navy">
           {p.program}
         </h3>
-        <EditLink href={`/forms/program?id=${p.id}`} />
+        <EditLink href={`/forms/program/${p.id}`} />
       </div>
       <div className="flex flex-wrap gap-2">
         {p.trainees_per_year ? <span className="pill-teal">{p.trainees_per_year} / yr</span> : null}

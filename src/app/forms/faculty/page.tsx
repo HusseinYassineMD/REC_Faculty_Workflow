@@ -1,14 +1,15 @@
-import { isStaticSite } from "@/lib/rec-data-demo";
+import { isStaticSite, listFaculty } from "@/lib/rec-data-demo";
+import FacultyFormPreviewServer from "./FacultyFormPreviewServer";
+import EditableFacultyForm from "./EditableFacultyForm";
 
-export default async function FacultyFormPage({
+export default function FacultyFormPage({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
   if (isStaticSite) {
-    const Preview = (await import("./PreviewFacultyForm")).default;
-    return <Preview />;
+    const row = listFaculty().find((f) => f.executive_committee === 1) ?? listFaculty()[0];
+    return <FacultyFormPreviewServer row={row} mode="new" />;
   }
-  const Editable = (await import("./EditableFacultyForm")).default;
-  return <Editable searchParams={searchParams} />;
+  return <EditableFacultyForm searchParams={searchParams} />;
 }

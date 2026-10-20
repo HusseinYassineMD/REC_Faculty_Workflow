@@ -83,6 +83,10 @@ body {
     @apply cursor-default border-slate-200/90 bg-white text-slate-800 opacity-100;
   }
 
+  .form-preview .field input[readonly] {
+    @apply bg-white;
+  }
+
   .form-preview .field input:disabled,
   .form-preview .field select:disabled,
   .form-preview .field textarea:disabled {
