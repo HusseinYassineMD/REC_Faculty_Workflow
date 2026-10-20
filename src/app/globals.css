@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-source: "Source Sans 3", system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+body {
+  @apply min-h-screen text-cpbh-navy antialiased;
+  background-color: #eef1f6;
+  background-image: theme("backgroundImage.mesh");
+  background-attachment: fixed;
+}
+
+@layer components {
+  .glass {
+    @apply border border-white/60 bg-white/75 shadow-card backdrop-blur-md;
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/80 bg-white/90 shadow-card backdrop-blur-sm;
+    box-shadow:
+      theme("boxShadow.card"),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .card-elevated {
+    @apply card transition duration-300 hover:-translate-y-0.5 hover:shadow-elevated;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition duration-200;
+  }
+
+  .btn-primary {
+    @apply btn bg-cpbh-gold text-cpbh-navy shadow-sm hover:shadow-glow hover:brightness-[0.98];
+  }
+
+  .btn-secondary {
+    @apply btn border border-slate-200/80 bg-white/90 text-cpbh-navy shadow-sm hover:border-cpbh-gold/40 hover:bg-white;
+  }
+
+  .btn-ghost {
+    @apply btn text-cpbh-navy/80 hover:bg-white/60;
+  }
+
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .pill-gold {
+    @apply pill bg-cpbh-gold/25 text-cpbh-navy ring-1 ring-cpbh-gold/40;
+  }
+
+  .pill-navy {
+    @apply pill bg-cpbh-navy/10 text-cpbh-navy;
+  }
+
+  .pill-teal {
+    @apply pill bg-cpbh-teal/15 text-cpbh-teal;
+  }
+
+  .field label {
+    @apply mb-1.5 block text-sm font-semibold text-cpbh-navy/90;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    @apply w-full rounded-xl border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm shadow-sm transition;
+    @apply focus:border-cpbh-gold focus:outline-none focus:ring-4 focus:ring-cpbh-gold/20;
+  }
+
+  .form-shell {
+    @apply card overflow-hidden p-0;
+  }
+
+  .form-shell-header {
+    @apply border-b border-slate-100 bg-gradient-to-r from-cpbh-navy/5 via-cpbh-gold/10 to-transparent px-6 py-5 sm:px-8;
+  }
+
+  .form-shell-body {
+    @apply space-y-2 px-6 py-6 sm:px-8 sm:py-8;
+  }
+
+  .section-accent {
+    @apply relative rounded-2xl border border-slate-100/80 bg-slate-50/50 p-5 sm:p-6;
+  }
+
+  .section-accent::before {
+    content: "";
+    @apply absolute left-0 top-4 bottom-4 w-1 rounded-full bg-gradient-to-b from-cpbh-gold to-cpbh-teal;
+  }
+
+  .record-card {
+    @apply relative flex flex-col gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition duration-200;
+    @apply hover:border-cpbh-gold/35 hover:shadow-elevated;
+  }
+
+  .stat-card {
+    @apply relative overflow-hidden rounded-2xl border border-white/90 p-5 shadow-card;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .stat-card::after {
+    content: "";
+    @apply pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-40;
+    background: radial-gradient(circle, rgba(255, 199, 44, 0.45) 0%, transparent 70%);
+  }
+
+  /* RPPR / print tables only — not main dashboard */
+  .table-rppr th {
+    @apply bg-gradient-to-r from-amber-50 to-amber-100/80 px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wide text-cpbh-navy;
+  }
+
+  .table-rppr td {
+    @apply border-b border-slate-100/80 px-4 py-3 text-sm align-top;
+  }
+
+  .table-rppr tbody tr {
+    @apply transition hover:bg-amber-50/30;
+  }
+}

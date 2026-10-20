@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RPPR G1/G2 preview · REC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="app-header no-print">
+    <div class="app-header-inner">
+      <div>
+        <span class="brand-pill">RPPR</span>
+        <h1>G1 &amp; G2 supporting tables</h1>
+        <p class="subtitle">
+          Preview REC scholars, faculty, training programs, and event attendance in NACC reporting layout.
+          Source: <code>recRoster.json</code> after sync.
+        </p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-secondary" href="index.html">← Hub</a>
+        <a class="btn btn-secondary" href="capture.html">Edit data</a>
+        <button type="button" class="btn btn-primary" id="btn-print">Print / PDF</button>
+        <a class="btn btn-secondary" href="https://www.naccdata.org/progress-reports-to-nia/" target="_blank" rel="noopener">NACC RPPR site</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="offline-banner" class="offline-banner no-print" hidden></div>
+    <div id="flash" class="flash info no-print" hidden></div>
+    <p id="sync-meta" class="subtitle no-print" style="font-size:0.85rem;color:var(--text-muted);"></p>
+    <div id="rppr-root"></div>
+  </main>
+
+  <script type="module" src="js/rppr-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REC data capture · USC ADRC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="app-header no-print">
+    <div class="app-header-inner">
+      <div>
+        <span class="brand-pill">Capture</span>
+        <h1>REC qualified information</h1>
+        <p class="subtitle">
+          Central source: Clinical Core Aim 1 <code>data/reference/rec/</code>.
+          Dashboard metrics pull from these CSVs after sync.
+        </p>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-secondary" href="index.html">← Hub</a>
+        <a class="btn btn-secondary" href="rppr.html">RPPR preview</a>
+        <a class="btn btn-secondary" href="http://localhost:3002/#rec" target="_blank" rel="noopener">Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="offline-banner" class="offline-banner no-print" hidden>
+      Run <code>python3 server.py</code> in REC_Faculty_Workflow, then reload this page.
+    </div>
+    <div id="flash" class="flash info no-print" hidden></div>
+
+    <div class="toolbar no-print">
+      <div id="tabs" class="tabs" role="tablist"></div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" id="btn-reload">Reload</button>
+        <button type="button" class="btn btn-secondary" id="btn-add">+ Add row</button>
+        <button type="button" class="btn btn-primary" id="btn-save">Save CSV</button>
+        <button type="button" class="btn btn-primary" id="btn-sync">Sync to dashboard</button>
+      </div>
+    </div>
+    <p id="csv-path" class="subtitle no-print" style="font-size:0.8rem;color:var(--text-muted);margin-top:0;"></p>
+
+    <div id="table-wrap" class="table-wrap"></div>
+  </main>
+
+  <script type="module" src="js/capture-app.js"></script>
+</body>
+</html>

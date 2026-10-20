@@ -1,0 +1,66 @@
+export type ScholarRow = {
+  id: number;
+  last_name: string;
+  first_name: string;
+  email: string | null;
+  department: string | null;
+  cohort_year: string | null;
+  current_or_past: string;
+  scholar_or_trainee: string;
+  training_level: string | null;
+  research_area: string | null;
+  progress: string | null;
+  adrc_affiliated: number;
+  adrd_field: number;
+  mentors: string | null;
+  primary_preceptor: string | null;
+  project_title: string | null;
+  project_description: string | null;
+  project_start_date: string | null;
+  project_end_date: string | null;
+  mentorship_start_date: string | null;
+  mentorship_end_date: string | null;
+  grant_name: string | null;
+  grant_number: string | null;
+  grant_mechanism: string | null;
+  grant_start_date: string | null;
+  grant_end_date: string | null;
+  budget_total: number | null;
+  budget_annual: number | null;
+  budget_fiscal_year: string | null;
+  notes: string | null;
+  form_status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FacultyRow = {
+  id: number;
+  last_name: string;
+  first_name: string;
+  title: string | null;
+  institution_department: string | null;
+  theme: string | null;
+  research_area: string | null;
+  executive_committee: number;
+  email: string | null;
+  mentor_active_start: string | null;
+  mentor_active_end: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProgramRow = {
+  id: number;
+  program: string;
+  trainees_per_year: string | null;
+  minority_researchers: string | null;
+  focus: string | null;
+  preceptor: string | null;
+  program_start: string | null;
+  program_end: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
