@@ -15,7 +15,7 @@ export default function RpprPreviewPage() {
     >
       <div className="card mb-6 flex flex-wrap items-center justify-between gap-3 p-4 print:hidden">
         <p className="text-sm text-slate-600">
-          Export fresh data from the dashboard before printing. This view is optimized for PDF.
+          Print or save as PDF for NACC workbooks. Tables mirror RPPR Table 1a, faculty, and training programs.
         </p>
         <PrintButton />
       </div>

@@ -77,11 +77,20 @@ body {
     @apply card overflow-hidden p-0;
   }
 
+  .form-preview .field input,
+  .form-preview .field select,
+  .form-preview .field textarea {
+    @apply cursor-default border-slate-200/90 bg-white text-slate-800 opacity-100;
+  }
+
   .form-preview .field input:disabled,
   .form-preview .field select:disabled,
   .form-preview .field textarea:disabled {
-    @apply cursor-default border-slate-200/80 bg-slate-50/90 text-slate-800 opacity-100;
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    @apply opacity-100;
+  }
+
+  .form-preview .field select:disabled {
+    @apply appearance-none bg-white;
   }
 
   .form-shell-header {

@@ -7,7 +7,7 @@ function EditLink({ href }: { href: string }) {
       href={href}
       className="btn-secondary shrink-0 px-3 py-1.5 text-xs opacity-90 group-hover:opacity-100"
     >
-      Edit
+      Open
     </Link>
   );
 }

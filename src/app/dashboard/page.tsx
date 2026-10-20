@@ -9,7 +9,8 @@ import {
   SectionPanel,
 } from "@/components/RecordCards";
 import StatCard from "@/components/StatCard";
-import { getCounts, isStaticSite, listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
+import { getCounts, listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
+import { isStaticSite } from "@/lib/rec-data-demo";
 
 export default async function DashboardPage() {
   const counts = getCounts();
@@ -17,9 +18,9 @@ export default async function DashboardPage() {
   const faculty = listFaculty();
   const programs = listPrograms();
 
-  const ExportActions = !isStaticSite
-    ? (await import("./DashboardExportActions")).default
-    : null;
+  const ExportActions = isStaticSite
+    ? (await import("./DashboardDemoActions")).default
+    : (await import("./DashboardExportActions")).default;
 
   return (
     <AppShell
@@ -51,7 +52,7 @@ export default async function DashboardPage() {
         <Link href="/reports" className="btn-ghost">
           Timeline report →
         </Link>
-        {ExportActions ? <ExportActions /> : null}
+        <ExportActions />
       </div>
 
       <SectionPanel

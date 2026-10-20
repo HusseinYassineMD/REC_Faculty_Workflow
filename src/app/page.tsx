@@ -23,6 +23,20 @@ export default function HomePage() {
       icon: "✦",
     },
     {
+      href: "/forms/faculty",
+      tag: "Intake",
+      title: "Faculty form",
+      body: "Title, theme, department, and executive committee for the RPPR faculty table.",
+      icon: "◈",
+    },
+    {
+      href: "/forms/program",
+      tag: "Intake",
+      title: "Training programs",
+      body: "Trainees per year, focus areas, and preceptors for USC programs.",
+      icon: "◎",
+    },
+    {
       href: "/reports",
       tag: "Timeline",
       title: "Reporting slices",
@@ -41,7 +55,7 @@ export default function HomePage() {
   return (
     <AppShell
       title="Faculty & RPPR workflow"
-      subtitle="Capture qualified REC information once — report it every year from this dashboard."
+      subtitle="One place to capture REC scholars, faculty, and programs — then slice timelines for annual RPPR."
       activeHref="/"
     >
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -51,7 +65,7 @@ export default function HomePage() {
         <StatCard label="Programs" value={counts.programs} accent="gold" />
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <Link
             key={c.href}
