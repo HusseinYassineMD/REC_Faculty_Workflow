@@ -143,3 +143,15 @@ body {
     @apply transition hover:bg-amber-50/30;
   }
 }
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  header,
+  footer,
+  .print\\:hidden {
+    display: none !important;
+  }
+}

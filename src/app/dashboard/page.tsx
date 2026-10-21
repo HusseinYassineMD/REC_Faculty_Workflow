@@ -2,30 +2,27 @@ import Link from "next/link";
 import { Suspense } from "react";
 import AppShell from "@/components/AppShell";
 import SavedBanner from "@/components/SavedBanner";
-import {
-  FacultyRecordCard,
-  ProgramRecordCard,
-  ScholarRecordCard,
-  SectionPanel,
-} from "@/components/RecordCards";
 import StatCard from "@/components/StatCard";
-import { getCounts, listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
+import { getCounts } from "@/lib/rec-data";
 import { isStaticSite } from "@/lib/rec-data-demo";
+import DashboardDemoActions from "./DashboardDemoActions";
 
 export default async function DashboardPage() {
   const counts = getCounts();
-  const scholars = listScholars();
-  const faculty = listFaculty();
-  const programs = listPrograms();
+  const ExportActions =
+    !isStaticSite ? (await import("./DashboardExportActions")).default : null;
 
-  const ExportActions = isStaticSite
-    ? (await import("./DashboardDemoActions")).default
-    : (await import("./DashboardExportActions")).default;
+  const views = [
+    { href: "/scholars", label: "Scholars view", desc: "Table G1 sort · export CSV" },
+    { href: "/faculty", label: "Faculty view", desc: "Participating mentors · export CSV" },
+    { href: "/programs", label: "Programs view", desc: "Training programs · export CSV" },
+    { href: "/rppr", label: "RPPR (G1 & G2)", desc: "NACC tables · export PDF" },
+  ];
 
   return (
     <AppShell
-      title="REC data dashboard"
-      subtitle="Your REC roster in one place — capture, review, and export when reporting season arrives."
+      title="REC dashboard"
+      subtitle="Summary metrics and intake — open each view tab to browse tables and export."
       activeHref="/dashboard"
     >
       <Suspense fallback={null}>
@@ -39,51 +36,49 @@ export default async function DashboardPage() {
         <StatCard label="Training programs" value={counts.programs} accent="gold" />
       </div>
 
-      <div className="card mb-10 flex flex-wrap items-center gap-3 p-5 sm:p-6">
-        <Link href="/forms/scholar" className="btn-primary">
-          + Scholar / trainee
-        </Link>
-        <Link href="/forms/faculty" className="btn-secondary">
-          + Faculty
-        </Link>
-        <Link href="/forms/program" className="btn-secondary">
-          + Program
-        </Link>
-        <Link href="/reports" className="btn-ghost">
-          Timeline report →
-        </Link>
-        <ExportActions />
+      <div className="card mb-8 p-6">
+        <h2 className="font-display text-lg font-bold text-cpbh-navy">Intake forms (G1 & G2 fields)</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Capture data once — RPPR Table G1 and G2 exports are generated from these records.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link href="/forms/scholar" className="btn-primary">
+            + Scholar / trainee
+          </Link>
+          <Link href="/forms/faculty" className="btn-secondary">
+            + Faculty
+          </Link>
+          <Link href="/forms/program" className="btn-secondary">
+            + Program
+          </Link>
+          {isStaticSite ? <DashboardDemoActions /> : ExportActions ? <ExportActions /> : null}
+        </div>
       </div>
 
-      <SectionPanel
-        title="Table 1a · Scholars & trainees"
-        description="Each card is one person — project dates and mentors at a glance."
-        count={scholars.length}
-      >
-        {scholars.map((s) => (
-          <ScholarRecordCard key={s.id} s={s} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        {views.map((v) => (
+          <Link key={v.href} href={v.href} className="card-elevated block p-5">
+            <h3 className="font-display text-lg font-semibold text-cpbh-navy">{v.label}</h3>
+            <p className="mt-1 text-sm text-slate-600">{v.desc}</p>
+            <span className="mt-3 inline-block text-sm font-semibold text-cpbh-teal">Open view →</span>
+          </Link>
         ))}
-      </SectionPanel>
+      </div>
 
-      <SectionPanel
-        title="Participating REC faculty"
-        description="Executive committee members marked with *"
-        count={faculty.length}
-      >
-        {faculty.map((f) => (
-          <FacultyRecordCard key={f.id} f={f} />
-        ))}
-      </SectionPanel>
-
-      <SectionPanel
-        title="USC training programs"
-        description="ADRD and minority scholar pathways"
-        count={programs.length}
-      >
-        {programs.map((p) => (
-          <ProgramRecordCard key={p.id} p={p} />
-        ))}
-      </SectionPanel>
+      <p className="mt-6 text-center text-sm text-slate-500">
+        <Link href="/reports" className="font-medium text-cpbh-navy hover:underline">
+          Timeline reports
+        </Link>{" "}
+        (as-of active counts) ·{" "}
+        <a
+          href="https://www.naccdata.org/progress-reports-to-nia/"
+          className="font-medium text-cpbh-navy hover:underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          NACC RPPR reference
+        </a>
+      </p>
     </AppShell>
   );
 }

@@ -21,12 +21,14 @@ export function Field({
   name,
   required,
   span2,
+  hint,
   children,
 }: {
   label: string;
   name?: string;
   required?: boolean;
   span2?: boolean;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -35,6 +37,7 @@ export function Field({
         {label}
         {required ? <span className="text-cpbh-cardinal"> *</span> : null}
       </label>
+      {hint ? <p className="mb-1.5 text-xs leading-snug text-slate-500">{hint}</p> : null}
       {children}
     </div>
   );

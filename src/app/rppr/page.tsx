@@ -1,73 +1,88 @@
 import AppShell from "@/components/AppShell";
 import PrintButton from "@/components/PrintButton";
+import ExportTableCsv from "@/components/ExportTableCsv";
 import { listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
+import {
+  TABLE_G1_HEADERS,
+  TABLE_G2_HEADERS,
+  sortScholarsForTableG1,
+  scholarToTableG1Row,
+  facultyToExportRow,
+  programToExportRow,
+} from "@/lib/rppr-standards";
 
 export default function RpprPreviewPage() {
-  const scholars = listScholars();
+  const reportingYear = new Date().getFullYear();
+  const scholars = sortScholarsForTableG1(listScholars());
   const faculty = listFaculty();
   const programs = listPrograms();
 
+  const g1Rows = scholars.map(scholarToTableG1Row);
+  const facultyRows = faculty.map(facultyToExportRow);
+  const programRows = programs.map(programToExportRow);
+
   return (
     <AppShell
-      title="RPPR G1 preview"
-      subtitle="Formal table layout for print and NACC workbooks — everyday browsing stays on the card dashboard."
+      title="RPPR Tables G1 & G2"
+      subtitle="Column labels follow the NACC RL5 REC template. Use Export PDF for submission-ready layout."
       activeHref="/rppr"
     >
       <div className="card mb-6 flex flex-wrap items-center justify-between gap-3 p-4 print:hidden">
         <p className="text-sm text-slate-600">
-          Print or save as PDF for NACC workbooks. Tables mirror RPPR Table 1a, faculty, and training programs.
+          Table G1 rows sort: Current → Past, Scholar → Trainee, last name A–Z.{" "}
+          <a
+            href="https://www.naccdata.org/progress-reports-to-nia/"
+            className="font-medium text-cpbh-teal underline-offset-2 hover:underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            NACC reporting guidance
+          </a>
         </p>
-        <PrintButton />
+        <div className="flex flex-wrap gap-2">
+          <ExportTableCsv
+            filename={`table-g1-rec-scholars-trainees-${reportingYear}.csv`}
+            headers={[...TABLE_G1_HEADERS]}
+            rows={g1Rows}
+          />
+          <PrintButton label="Export PDF" />
+        </div>
       </div>
 
       <RpprPanel
-        title="Table 1a. Summary table of REC scholars and trainees"
-        headers={[
-          "Name",
-          "Current / past",
-          "Scholar / trainee",
-          "Level",
-          "Research area",
-          "Progress",
-          "ADRC?",
-          "ADRD?",
+        title={`Table G1. Summary table of REC SCHOLARS and TRAINEES – Year ${reportingYear}`}
+        headers={[...TABLE_G1_HEADERS]}
+        rows={g1Rows}
+      />
+
+      <RpprPanel
+        title={`Table G2. Summary table of REC EVENTS – Year ${reportingYear}`}
+        subtitle="Event intake for G2 will be added in the next phase; structure matches NACC template."
+        headers={[...TABLE_G2_HEADERS]}
+        rows={[
+          [
+            "(Events captured in phase 2)",
+            "Brief description and audience",
+            "—",
+            "Platform / access",
+            "Other information",
+          ],
         ]}
-        rows={scholars.map((r) => [
-          `${r.last_name}, ${r.first_name}`,
-          r.current_or_past,
-          r.scholar_or_trainee,
-          r.training_level ?? "",
-          r.research_area ?? "",
-          r.progress ?? "",
-          r.adrc_affiliated ? "Yes" : "No",
-          r.adrd_field ? "Yes" : "No",
-        ])}
       />
 
+      <div className="print:break-before-page" />
+
       <RpprPanel
-        title="Participating REC faculty"
-        subtitle="* Executive committee"
+        title="Participating REC faculty (supporting table)"
+        subtitle="* Executive committee — not part of G1/G2 core template"
         headers={["Last", "First", "Title", "Department", "Theme", "Research area"]}
-        rows={faculty.map((f) => [
-          f.last_name + (f.executive_committee ? "*" : ""),
-          f.first_name,
-          f.title ?? "",
-          f.institution_department ?? "",
-          f.theme ?? "",
-          f.research_area ?? "",
-        ])}
+        rows={facultyRows}
       />
 
       <RpprPanel
-        title="USC training programs (ADRD / minority scholars)"
+        title="USC training programs (supporting table)"
         headers={["Program", "Trainees / year", "Minority %", "Focus", "Preceptor"]}
-        rows={programs.map((p) => [
-          p.program,
-          p.trainees_per_year ?? "",
-          p.minority_researchers ?? "",
-          p.focus ?? "",
-          p.preceptor ?? "",
-        ])}
+        rows={programRows.map((r) => r.slice(0, 5))}
       />
     </AppShell>
   );
@@ -86,7 +101,7 @@ function RpprPanel({
 }) {
   return (
     <section className="card mb-8 overflow-hidden print:shadow-none print:ring-0">
-      <div className="bg-gradient-to-r from-cpbh-navy to-cpbh-deep px-5 py-4 text-white">
+      <div className="bg-gradient-to-r from-cpbh-navy to-cpbh-deep px-5 py-4 text-white print:bg-cpbh-navy">
         <h2 className="font-display text-lg font-bold">{title}</h2>
         {subtitle ? <p className="text-xs text-white/70">{subtitle}</p> : null}
       </div>
@@ -105,7 +120,7 @@ function RpprPanel({
             {rows.map((row, i) => (
               <tr key={i}>
                 {row.map((cell, j) => (
-                  <td key={j} className="table-rppr">
+                  <td key={j} className="table-rppr align-top text-sm">
                     {cell}
                   </td>
                 ))}

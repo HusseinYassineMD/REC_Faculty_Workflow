@@ -3,6 +3,12 @@ import AppShell from "@/components/AppShell";
 import FormSection, { Field } from "@/components/FormSection";
 import { saveScholar } from "@/server/rec-actions";
 import { getScholar } from "@/lib/rec-data";
+import {
+  ADRC_FIELD_HELP,
+  ADRD_FIELD_HELP,
+  SCHOLAR_DEFINITION,
+  TRAINEE_DEFINITION,
+} from "@/lib/rppr-standards";
 
 export default function EditableScholarForm({
   searchParams,
@@ -53,7 +59,12 @@ export default function EditableScholarForm({
                 <option>Past</option>
               </select>
             </Field>
-            <Field label="Scholar or trainee" name="scholar_or_trainee" required>
+            <Field
+              label="Scholar or trainee"
+              name="scholar_or_trainee"
+              required
+              hint={`${SCHOLAR_DEFINITION} ${TRAINEE_DEFINITION}`}
+            >
               <select id="scholar_or_trainee" name="scholar_or_trainee" defaultValue={row?.scholar_or_trainee ?? "Scholar"}>
                 <option>Scholar</option>
                 <option>Trainee</option>
@@ -70,13 +81,17 @@ export default function EditableScholarForm({
             <Field label="Progress" name="progress" span2>
               <textarea id="progress" name="progress" rows={3} defaultValue={v("progress")} />
             </Field>
-            <Field label="ADRC affiliated?" name="adrc_affiliated">
+            <Field label="Currently affiliated with an ADRC?" name="adrc_affiliated" hint={ADRC_FIELD_HELP}>
               <select id="adrc_affiliated" name="adrc_affiliated" defaultValue={row?.adrc_affiliated === 0 ? "0" : "1"}>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
               </select>
             </Field>
-            <Field label="ADRD field?" name="adrd_field">
+            <Field
+              label="Working / collaborating within the ADRD field?"
+              name="adrd_field"
+              hint={ADRD_FIELD_HELP}
+            >
               <select id="adrd_field" name="adrd_field" defaultValue={row?.adrd_field === 0 ? "0" : "1"}>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -84,7 +99,7 @@ export default function EditableScholarForm({
             </Field>
           </FormSection>
           <FormSection title="Mentorship">
-            <Field label="Mentor(s)" name="mentors" span2>
+            <Field label="Mentor(s)" name="mentors">
               <textarea id="mentors" name="mentors" rows={2} defaultValue={v("mentors")} />
             </Field>
             <Field label="Primary preceptor" name="primary_preceptor">

@@ -2,6 +2,7 @@ import AppShell from "@/components/AppShell";
 import FormSection, { Field } from "@/components/FormSection";
 import PreviewFormFooter from "@/components/PreviewFormFooter";
 import { displayScholarValues } from "@/lib/scholar-display";
+import { ADRC_FIELD_HELP, ADRD_FIELD_HELP } from "@/lib/rppr-standards";
 import type { ScholarRow } from "@/lib/types";
 
 export default function ScholarFormPreviewServer({
@@ -69,13 +70,17 @@ export default function ScholarFormPreviewServer({
             <Field label="Progress" name="progress" span2>
               <textarea id="progress" rows={3} readOnly value={d.progress} />
             </Field>
-            <Field label="ADRC affiliated?" name="adrc_affiliated">
+            <Field label="Currently affiliated with an ADRC?" name="adrc_affiliated" hint={ADRC_FIELD_HELP}>
               <select id="adrc_affiliated" disabled defaultValue={d.adrc_affiliated}>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
               </select>
             </Field>
-            <Field label="ADRD field?" name="adrd_field">
+            <Field
+              label="Working / collaborating within the ADRD field?"
+              name="adrd_field"
+              hint={ADRD_FIELD_HELP}
+            >
               <select id="adrd_field" disabled defaultValue={d.adrd_field}>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -83,7 +88,7 @@ export default function ScholarFormPreviewServer({
             </Field>
           </FormSection>
           <FormSection title="Mentorship">
-            <Field label="Mentor(s)" name="mentors" span2>
+            <Field label="Mentor(s)" name="mentors">
               <textarea id="mentors" rows={2} readOnly value={d.mentors} />
             </Field>
             <Field label="Primary preceptor" name="primary_preceptor">

@@ -5,10 +5,9 @@ import { LINKS } from "@/lib/paths";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/forms/scholar", label: "Scholars" },
-  { href: "/forms/faculty", label: "Faculty" },
-  { href: "/forms/program", label: "Programs" },
-  { href: "/reports", label: "Reports" },
+  { href: "/scholars", label: "Scholars" },
+  { href: "/faculty", label: "Faculty" },
+  { href: "/programs", label: "Programs" },
   { href: "/rppr", label: "RPPR" },
 ];
 
