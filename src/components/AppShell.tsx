@@ -1,25 +1,17 @@
-import Link from "next/link";
 import DeployVersionCheck from "@/components/DeployVersionCheck";
+import SiteNav from "@/components/SiteNav";
 import StaticSiteBanner from "@/components/StaticSiteBanner";
 import { LINKS } from "@/lib/paths";
-
-const nav = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/scholars", label: "Scholars" },
-  { href: "/faculty", label: "Faculty" },
-  { href: "/programs", label: "Programs" },
-  { href: "/rppr", label: "RPPR" },
-];
 
 export default function AppShell({
   title,
   subtitle,
   children,
-  activeHref,
 }: {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
+  /** Kept so older pages still compile. The nav highlights from the current URL. */
   activeHref?: string;
 }) {
   return (
@@ -51,24 +43,7 @@ export default function AppShell({
             </div>
           </div>
 
-          <nav className="mt-6 flex flex-wrap gap-2">
-            {nav.map((item) => {
-              const active = activeHref === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold transition sm:text-sm ${
-                    active
-                      ? "bg-cpbh-gold text-cpbh-navy shadow-glow"
-                      : "border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <SiteNav />
         </div>
       </header>
 

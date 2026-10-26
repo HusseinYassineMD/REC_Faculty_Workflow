@@ -1,16 +1,42 @@
 import type { FacultyRow, ProgramRow, ScholarRow } from "./types";
 
-/** NACC Table G1 column headers (RL5 REC G1/G2 template). */
+/**
+ * Open questions from the annotated G1 template.
+ * Shown in red brackets in the app; omitted from the NIH PDF/CSV export.
+ */
+export const OPEN_QUESTIONS = {
+  currentOrPast:
+    "Allow for this record to be updated with a timestamp capturing date of change",
+  scholarOrTrainee: "definition of a scholar is X and trainee is Y — confirm with HY",
+  researchArea: "succinct description <60 characters",
+  progress: "succinct recap of significant milestones",
+  adrc: "mentored or funded by ADRC",
+  adrd: "to be defined — what is included and what is not included in the ADRD field",
+} as const;
+
+/** NACC Table G1 column headers (RL5 REC G1/G2 template). Exact NIH labels. */
 export const TABLE_G1_HEADERS = [
   "Last name, First name",
   "Current or Past Trainee",
   "Scholar or Trainee",
   "Level of Training",
   "Area of Research",
-  "Progress [succinct recap of significant milestones]",
+  "Progress",
   "Currently Affiliated with an ADRC?",
-  "Working/collaborating within the ADRD field?",
+  "Working/ collaborating within the ADRD field?",
 ] as const;
+
+/** Parallel to TABLE_G1_HEADERS. Null means no open question on that column. */
+export const TABLE_G1_QUESTIONS: (string | null)[] = [
+  null,
+  OPEN_QUESTIONS.currentOrPast,
+  OPEN_QUESTIONS.scholarOrTrainee,
+  null,
+  OPEN_QUESTIONS.researchArea,
+  OPEN_QUESTIONS.progress,
+  OPEN_QUESTIONS.adrc,
+  OPEN_QUESTIONS.adrd,
+];
 
 export const TABLE_G2_HEADERS = [
   "Event, Date(s), Sponsors",
@@ -19,13 +45,6 @@ export const TABLE_G2_HEADERS = [
   "Platform, Advertising, Access",
   "Other Information",
 ] as const;
-
-export const ADRC_FIELD_HELP =
-  "Count as Yes when the person is mentored or funded through the ADRC REC (per NACC G1 guidance).";
-
-/** Placeholder until REC leadership finalizes inclusion criteria with Tiffany/HY. */
-export const ADRD_FIELD_HELP =
-  "To be defined: typically working or collaborating in Alzheimer’s disease and related dementias research, care, or education. Confirm Yes/No criteria with REC leadership before final RPPR.";
 
 export const SCHOLAR_DEFINITION =
   "REC Scholars: early career investigators selected by the ADRC for structured educational programming and comprehensive ADRD mentorship (often 3–5 years tracking).";

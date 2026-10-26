@@ -1,6 +1,6 @@
 import Link from "next/link";
 import AppShell from "@/components/AppShell";
-import FormSection, { Field } from "@/components/FormSection";
+import FormSection, { Field, FieldRow } from "@/components/FormSection";
 import { saveFaculty } from "@/server/rec-actions";
 import { getFaculty } from "@/lib/rec-data";
 
@@ -56,12 +56,14 @@ export default function EditableFacultyForm({
             <Field label="Research area" name="research_area" span2>
               <textarea name="research_area" rows={3} defaultValue={v("research_area")} />
             </Field>
-            <Field label="Mentor active from" name="mentor_active_start">
-              <input name="mentor_active_start" type="date" defaultValue={v("mentor_active_start")} />
-            </Field>
-            <Field label="Mentor active until" name="mentor_active_end">
-              <input name="mentor_active_end" type="date" defaultValue={v("mentor_active_end")} />
-            </Field>
+            <FieldRow>
+              <Field label="Mentor active from" name="mentor_active_start">
+                <input name="mentor_active_start" type="date" defaultValue={v("mentor_active_start")} />
+              </Field>
+              <Field label="Mentor active until" name="mentor_active_end">
+                <input name="mentor_active_end" type="date" defaultValue={v("mentor_active_end")} />
+              </Field>
+            </FieldRow>
             <Field label="Notes" name="notes" span2>
               <textarea name="notes" rows={2} defaultValue={v("notes")} />
             </Field>

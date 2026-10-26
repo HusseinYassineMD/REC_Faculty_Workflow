@@ -1,5 +1,5 @@
 import AppShell from "@/components/AppShell";
-import FormSection, { Field } from "@/components/FormSection";
+import FormSection, { Field, FieldRow } from "@/components/FormSection";
 import PreviewFormFooter from "@/components/PreviewFormFooter";
 import type { FacultyRow } from "@/lib/types";
 
@@ -54,17 +54,19 @@ export default function FacultyFormPreviewServer({
             <Field label="Research area" name="research_area" span2>
               <textarea name="research_area" rows={3} readOnly value={v("research_area")} />
             </Field>
-            <Field label="Mentor active from" name="mentor_active_start">
-              <input
-                name="mentor_active_start"
-                type="date"
-                readOnly
-                value={row.mentor_active_start ?? "2020-01-01"}
-              />
-            </Field>
-            <Field label="Mentor active until" name="mentor_active_end">
-              <input name="mentor_active_end" type="date" readOnly value={row.mentor_active_end ?? ""} />
-            </Field>
+            <FieldRow>
+              <Field label="Mentor active from" name="mentor_active_start">
+                <input
+                  name="mentor_active_start"
+                  type="date"
+                  readOnly
+                  value={row.mentor_active_start ?? "2020-01-01"}
+                />
+              </Field>
+              <Field label="Mentor active until" name="mentor_active_end">
+                <input name="mentor_active_end" type="date" readOnly value={row.mentor_active_end ?? ""} />
+              </Field>
+            </FieldRow>
             <Field label="Notes" name="notes" span2>
               <textarea name="notes" rows={2} readOnly value={v("notes")} />
             </Field>

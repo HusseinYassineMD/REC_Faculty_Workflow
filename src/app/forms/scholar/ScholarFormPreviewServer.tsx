@@ -1,8 +1,12 @@
 import AppShell from "@/components/AppShell";
-import FormSection, { Field } from "@/components/FormSection";
+import FormSection, { Field, FieldRow } from "@/components/FormSection";
 import PreviewFormFooter from "@/components/PreviewFormFooter";
 import { displayScholarValues } from "@/lib/scholar-display";
-import { ADRC_FIELD_HELP, ADRD_FIELD_HELP } from "@/lib/rppr-standards";
+import {
+  OPEN_QUESTIONS,
+  SCHOLAR_DEFINITION,
+  TRAINEE_DEFINITION,
+} from "@/lib/rppr-standards";
 import type { ScholarRow } from "@/lib/types";
 
 export default function ScholarFormPreviewServer({
@@ -27,7 +31,10 @@ export default function ScholarFormPreviewServer({
             {isEdit ? "Update record" : "New scholar or trainee"}
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Fields marked * appear on RPPR Table 1a. Dates use YYYY-MM-DD.
+            Fields marked * appear on RPPR Table G1. Dates use YYYY-MM-DD.
+          </p>
+          <p className="mt-2 text-sm font-semibold text-cpbh-cardinal print:hidden">
+            Text in red brackets are open questions to confirm with REC leadership.
           </p>
         </div>
         <div className="form-shell-body space-y-6">
@@ -47,13 +54,24 @@ export default function ScholarFormPreviewServer({
             <Field label="Cohort / training year" name="cohort_year">
               <input id="cohort_year" readOnly value={d.cohort_year} />
             </Field>
-            <Field label="Current or past" name="current_or_past" required>
+            <Field
+              label="Current or past"
+              name="current_or_past"
+              required
+              question={OPEN_QUESTIONS.currentOrPast}
+            >
               <select id="current_or_past" disabled defaultValue={d.current_or_past}>
                 <option>Current</option>
                 <option>Past</option>
               </select>
             </Field>
-            <Field label="Scholar or trainee" name="scholar_or_trainee" required>
+            <Field
+              label="Scholar or trainee"
+              name="scholar_or_trainee"
+              required
+              question={OPEN_QUESTIONS.scholarOrTrainee}
+              hint={`${SCHOLAR_DEFINITION} ${TRAINEE_DEFINITION}`}
+            >
               <select id="scholar_or_trainee" disabled defaultValue={d.scholar_or_trainee}>
                 <option>Scholar</option>
                 <option>Trainee</option>
@@ -64,13 +82,22 @@ export default function ScholarFormPreviewServer({
             </Field>
           </FormSection>
           <FormSection title="Research & RPPR progress">
-            <Field label="Area of research" name="research_area" span2>
+            <Field
+              label="Area of research"
+              name="research_area"
+              span2
+              question={OPEN_QUESTIONS.researchArea}
+            >
               <textarea id="research_area" rows={3} readOnly value={d.research_area} />
             </Field>
-            <Field label="Progress" name="progress" span2>
+            <Field label="Progress" name="progress" span2 question={OPEN_QUESTIONS.progress}>
               <textarea id="progress" rows={3} readOnly value={d.progress} />
             </Field>
-            <Field label="Currently affiliated with an ADRC?" name="adrc_affiliated" hint={ADRC_FIELD_HELP}>
+            <Field
+              label="Currently affiliated with an ADRC?"
+              name="adrc_affiliated"
+              question={OPEN_QUESTIONS.adrc}
+            >
               <select id="adrc_affiliated" disabled defaultValue={d.adrc_affiliated}>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -79,7 +106,7 @@ export default function ScholarFormPreviewServer({
             <Field
               label="Working / collaborating within the ADRD field?"
               name="adrd_field"
-              hint={ADRD_FIELD_HELP}
+              question={OPEN_QUESTIONS.adrd}
             >
               <select id="adrd_field" disabled defaultValue={d.adrd_field}>
                 <option value="1">Yes</option>
@@ -88,18 +115,22 @@ export default function ScholarFormPreviewServer({
             </Field>
           </FormSection>
           <FormSection title="Mentorship">
-            <Field label="Mentor(s)" name="mentors">
-              <textarea id="mentors" rows={2} readOnly value={d.mentors} />
-            </Field>
-            <Field label="Primary preceptor" name="primary_preceptor">
-              <input id="primary_preceptor" readOnly value={d.primary_preceptor} />
-            </Field>
-            <Field label="Mentorship start" name="mentorship_start_date">
-              <input id="mentorship_start_date" type="date" readOnly value={d.mentorship_start_date} />
-            </Field>
-            <Field label="Mentorship end" name="mentorship_end_date">
-              <input id="mentorship_end_date" type="date" readOnly value={d.mentorship_end_date} />
-            </Field>
+            <FieldRow>
+              <Field label="Mentor(s)" name="mentors">
+                <textarea id="mentors" rows={2} readOnly value={d.mentors} />
+              </Field>
+              <Field label="Primary preceptor" name="primary_preceptor">
+                <input id="primary_preceptor" readOnly value={d.primary_preceptor} />
+              </Field>
+            </FieldRow>
+            <FieldRow>
+              <Field label="Mentorship start" name="mentorship_start_date">
+                <input id="mentorship_start_date" type="date" readOnly value={d.mentorship_start_date} />
+              </Field>
+              <Field label="Mentorship end" name="mentorship_end_date">
+                <input id="mentorship_end_date" type="date" readOnly value={d.mentorship_end_date} />
+              </Field>
+            </FieldRow>
           </FormSection>
           <FormSection title="Project">
             <Field label="Project title" name="project_title" span2>

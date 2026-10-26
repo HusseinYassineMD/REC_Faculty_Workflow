@@ -5,19 +5,19 @@ export default function RosterDataTable({
   title,
   description,
   headers,
+  headerQuestions,
   rows,
   exportFilename,
   editHrefPrefix,
-  editIdColumn = 0,
   idByRow,
 }: {
   title: string;
   description?: string;
   headers: string[];
+  headerQuestions?: (string | null)[];
   rows: string[][];
   exportFilename: string;
   editHrefPrefix?: string;
-  editIdColumn?: number;
   idByRow?: number[];
 }) {
   return (
@@ -36,9 +36,14 @@ export default function RosterDataTable({
               {editHrefPrefix ? (
                 <th className="table-rppr w-20">Open</th>
               ) : null}
-              {headers.map((h) => (
+              {headers.map((h, idx) => (
                 <th key={h} className="table-rppr">
                   {h}
+                  {headerQuestions?.[idx] ? (
+                    <span className="open-question mt-1 block text-[11px] font-semibold normal-case tracking-normal text-cpbh-cardinal">
+                      [{headerQuestions[idx]}]
+                    </span>
+                  ) : null}
                 </th>
               ))}
             </tr>

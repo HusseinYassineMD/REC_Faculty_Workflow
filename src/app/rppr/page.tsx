@@ -1,35 +1,29 @@
 import AppShell from "@/components/AppShell";
 import PrintButton from "@/components/PrintButton";
 import ExportTableCsv from "@/components/ExportTableCsv";
-import { listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
+import { listScholars } from "@/lib/rec-data";
 import {
   TABLE_G1_HEADERS,
+  TABLE_G1_QUESTIONS,
   TABLE_G2_HEADERS,
   sortScholarsForTableG1,
   scholarToTableG1Row,
-  facultyToExportRow,
-  programToExportRow,
 } from "@/lib/rppr-standards";
 
 export default function RpprPreviewPage() {
   const reportingYear = new Date().getFullYear();
   const scholars = sortScholarsForTableG1(listScholars());
-  const faculty = listFaculty();
-  const programs = listPrograms();
-
   const g1Rows = scholars.map(scholarToTableG1Row);
-  const facultyRows = faculty.map(facultyToExportRow);
-  const programRows = programs.map(programToExportRow);
 
   return (
     <AppShell
       title="RPPR Tables G1 & G2"
-      subtitle="Column labels follow the NACC RL5 REC template. Use Export PDF for submission-ready layout."
-      activeHref="/rppr"
+      subtitle="Table G1 and Table G2 in the NACC RL5 layout, filled from the current scholar and trainee roster."
     >
       <div className="card mb-6 flex flex-wrap items-center justify-between gap-3 p-4 print:hidden">
         <p className="text-sm text-slate-600">
-          Table G1 rows sort: Current → Past, Scholar → Trainee, last name A–Z.{" "}
+          Table G1 rows sort: Current → Past, then Scholar → Trainee, then last name A–Z.
+          Red brackets on the table are open questions and are left off the PDF.{" "}
           <a
             href="https://www.naccdata.org/progress-reports-to-nia/"
             className="font-medium text-cpbh-teal underline-offset-2 hover:underline"
@@ -52,37 +46,18 @@ export default function RpprPreviewPage() {
       <RpprPanel
         title={`Table G1. Summary table of REC SCHOLARS and TRAINEES – Year ${reportingYear}`}
         headers={[...TABLE_G1_HEADERS]}
+        questions={TABLE_G1_QUESTIONS}
         rows={g1Rows}
       />
 
+      <p className="mb-3 text-sm text-slate-500 print:hidden">
+        Table G2 uses the NACC event columns. The current roster has scholar, faculty, and program
+        records, and no stored REC events yet — add those on the intake form.
+      </p>
       <RpprPanel
         title={`Table G2. Summary table of REC EVENTS – Year ${reportingYear}`}
-        subtitle="Event intake for G2 will be added in the next phase; structure matches NACC template."
         headers={[...TABLE_G2_HEADERS]}
-        rows={[
-          [
-            "(Events captured in phase 2)",
-            "Brief description and audience",
-            "—",
-            "Platform / access",
-            "Other information",
-          ],
-        ]}
-      />
-
-      <div className="print:break-before-page" />
-
-      <RpprPanel
-        title="Participating REC faculty (supporting table)"
-        subtitle="* Executive committee — not part of G1/G2 core template"
-        headers={["Last", "First", "Title", "Department", "Theme", "Research area"]}
-        rows={facultyRows}
-      />
-
-      <RpprPanel
-        title="USC training programs (supporting table)"
-        headers={["Program", "Trainees / year", "Minority %", "Focus", "Preceptor"]}
-        rows={programRows.map((r) => r.slice(0, 5))}
+        rows={[]}
       />
     </AppShell>
   );
@@ -92,11 +67,13 @@ function RpprPanel({
   title,
   subtitle,
   headers,
+  questions,
   rows,
 }: {
   title: string;
   subtitle?: string;
   headers: string[];
+  questions?: (string | null)[];
   rows: string[][];
 }) {
   return (
@@ -109,9 +86,14 @@ function RpprPanel({
         <table className="w-full min-w-[720px]">
           <thead>
             <tr>
-              {headers.map((h) => (
+              {headers.map((h, idx) => (
                 <th key={h} className="table-rppr">
                   {h}
+                  {questions?.[idx] ? (
+                    <span className="open-question mt-1 block text-[11px] font-semibold normal-case tracking-normal text-cpbh-cardinal">
+                      [{questions[idx]}]
+                    </span>
+                  ) : null}
                 </th>
               ))}
             </tr>

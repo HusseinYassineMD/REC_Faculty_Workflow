@@ -1,11 +1,10 @@
 import Link from "next/link";
 import AppShell from "@/components/AppShell";
-import FormSection, { Field } from "@/components/FormSection";
+import FormSection, { Field, FieldRow } from "@/components/FormSection";
 import { saveScholar } from "@/server/rec-actions";
 import { getScholar } from "@/lib/rec-data";
 import {
-  ADRC_FIELD_HELP,
-  ADRD_FIELD_HELP,
+  OPEN_QUESTIONS,
   SCHOLAR_DEFINITION,
   TRAINEE_DEFINITION,
 } from "@/lib/rppr-standards";
@@ -33,7 +32,10 @@ export default function EditableScholarForm({
             {id ? "Update record" : "New scholar or trainee"}
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Fields marked * appear on RPPR Table 1a. Dates use YYYY-MM-DD.
+            Fields marked * appear on RPPR Table G1. Dates use YYYY-MM-DD.
+          </p>
+          <p className="mt-2 text-sm font-semibold text-cpbh-cardinal print:hidden">
+            Text in red brackets are open questions to confirm with REC leadership.
           </p>
         </div>
         <div className="form-shell-body space-y-6">
@@ -53,7 +55,12 @@ export default function EditableScholarForm({
             <Field label="Cohort / training year" name="cohort_year">
               <input id="cohort_year" name="cohort_year" placeholder="2025–2026" defaultValue={v("cohort_year")} />
             </Field>
-            <Field label="Current or past" name="current_or_past" required>
+            <Field
+              label="Current or past"
+              name="current_or_past"
+              required
+              question={OPEN_QUESTIONS.currentOrPast}
+            >
               <select id="current_or_past" name="current_or_past" defaultValue={row?.current_or_past ?? "Current"}>
                 <option>Current</option>
                 <option>Past</option>
@@ -63,6 +70,7 @@ export default function EditableScholarForm({
               label="Scholar or trainee"
               name="scholar_or_trainee"
               required
+              question={OPEN_QUESTIONS.scholarOrTrainee}
               hint={`${SCHOLAR_DEFINITION} ${TRAINEE_DEFINITION}`}
             >
               <select id="scholar_or_trainee" name="scholar_or_trainee" defaultValue={row?.scholar_or_trainee ?? "Scholar"}>
@@ -75,13 +83,22 @@ export default function EditableScholarForm({
             </Field>
           </FormSection>
           <FormSection title="Research & RPPR progress">
-            <Field label="Area of research" name="research_area" span2>
+            <Field
+              label="Area of research"
+              name="research_area"
+              span2
+              question={OPEN_QUESTIONS.researchArea}
+            >
               <textarea id="research_area" name="research_area" rows={3} defaultValue={v("research_area")} />
             </Field>
-            <Field label="Progress" name="progress" span2>
+            <Field label="Progress" name="progress" span2 question={OPEN_QUESTIONS.progress}>
               <textarea id="progress" name="progress" rows={3} defaultValue={v("progress")} />
             </Field>
-            <Field label="Currently affiliated with an ADRC?" name="adrc_affiliated" hint={ADRC_FIELD_HELP}>
+            <Field
+              label="Currently affiliated with an ADRC?"
+              name="adrc_affiliated"
+              question={OPEN_QUESTIONS.adrc}
+            >
               <select id="adrc_affiliated" name="adrc_affiliated" defaultValue={row?.adrc_affiliated === 0 ? "0" : "1"}>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -90,7 +107,7 @@ export default function EditableScholarForm({
             <Field
               label="Working / collaborating within the ADRD field?"
               name="adrd_field"
-              hint={ADRD_FIELD_HELP}
+              question={OPEN_QUESTIONS.adrd}
             >
               <select id="adrd_field" name="adrd_field" defaultValue={row?.adrd_field === 0 ? "0" : "1"}>
                 <option value="1">Yes</option>
@@ -99,18 +116,22 @@ export default function EditableScholarForm({
             </Field>
           </FormSection>
           <FormSection title="Mentorship">
-            <Field label="Mentor(s)" name="mentors">
-              <textarea id="mentors" name="mentors" rows={2} defaultValue={v("mentors")} />
-            </Field>
-            <Field label="Primary preceptor" name="primary_preceptor">
-              <input id="primary_preceptor" name="primary_preceptor" defaultValue={v("primary_preceptor")} />
-            </Field>
-            <Field label="Mentorship start" name="mentorship_start_date">
-              <input id="mentorship_start_date" name="mentorship_start_date" type="date" defaultValue={v("mentorship_start_date")} />
-            </Field>
-            <Field label="Mentorship end" name="mentorship_end_date">
-              <input id="mentorship_end_date" name="mentorship_end_date" type="date" defaultValue={v("mentorship_end_date")} />
-            </Field>
+            <FieldRow>
+              <Field label="Mentor(s)" name="mentors">
+                <textarea id="mentors" name="mentors" rows={2} defaultValue={v("mentors")} />
+              </Field>
+              <Field label="Primary preceptor" name="primary_preceptor">
+                <input id="primary_preceptor" name="primary_preceptor" defaultValue={v("primary_preceptor")} />
+              </Field>
+            </FieldRow>
+            <FieldRow>
+              <Field label="Mentorship start" name="mentorship_start_date">
+                <input id="mentorship_start_date" name="mentorship_start_date" type="date" defaultValue={v("mentorship_start_date")} />
+              </Field>
+              <Field label="Mentorship end" name="mentorship_end_date">
+                <input id="mentorship_end_date" name="mentorship_end_date" type="date" defaultValue={v("mentorship_end_date")} />
+              </Field>
+            </FieldRow>
           </FormSection>
           <FormSection title="Project">
             <Field label="Project title" name="project_title" span2>

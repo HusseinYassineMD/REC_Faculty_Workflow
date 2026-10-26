@@ -145,6 +145,10 @@ body {
 }
 
 @media print {
+  .open-question {
+    display: none !important;
+  }
+
   body {
     background: white !important;
   }

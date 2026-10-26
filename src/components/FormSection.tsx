@@ -22,6 +22,7 @@ export function Field({
   required,
   span2,
   hint,
+  question,
   children,
 }: {
   label: string;
@@ -29,6 +30,8 @@ export function Field({
   required?: boolean;
   span2?: boolean;
   hint?: string;
+  /** Open question for REC leadership. Rendered in red brackets. */
+  question?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -37,8 +40,18 @@ export function Field({
         {label}
         {required ? <span className="text-cpbh-cardinal"> *</span> : null}
       </label>
+      {question ? (
+        <p className="open-question mb-1.5 text-xs font-semibold leading-snug text-cpbh-cardinal">
+          [{question}]
+        </p>
+      ) : null}
       {hint ? <p className="mb-1.5 text-xs leading-snug text-slate-500">{hint}</p> : null}
       {children}
     </div>
   );
+}
+
+/** Keeps two fields on one visual row, including narrow screens. */
+export function FieldRow({ children }: { children: React.ReactNode }) {
+  return <div className="grid grid-cols-2 gap-4 sm:col-span-2">{children}</div>;
 }
