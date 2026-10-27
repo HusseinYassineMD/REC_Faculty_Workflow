@@ -46,7 +46,6 @@ function TrashIcon() {
 }
 
 function CardActions({ label, onEdit, onDelete }: { label: string; onEdit: () => void; onDelete: () => void }) {
-  if (process.env.NEXT_PUBLIC_STATIC_SITE === "1") return null;
   return (
     <div className="absolute right-3 top-3 z-10 flex gap-1">
       <button
