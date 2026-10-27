@@ -6,8 +6,10 @@ import { listFaculty, listPrograms, listScholars } from "./rec-data";
 import type { ScholarRow } from "./types";
 import { buildReportPayload, composeProgress } from "./report-payload";
 
-function boolYn(v: number): string {
-  return v ? "yes" : "no";
+function boolYn(v: number | null): string {
+  if (v === 1) return "yes";
+  if (v === 0) return "no";
+  return "";
 }
 
 function dateRange(label: string, start: string | null, end: string | null): string {

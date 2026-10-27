@@ -7,7 +7,7 @@ export default function ViewsPage() {
   return (
     <AppShell
       title="Views"
-      subtitle="Look up the roster by scholar / trainee, faculty, or program. Export the table you are looking at."
+      subtitle="Filter the roster, check the people you want, and export that selection as CSV."
     >
       <Suspense fallback={<p className="text-sm text-slate-500">Loading views…</p>}>
         <ViewsBrowser

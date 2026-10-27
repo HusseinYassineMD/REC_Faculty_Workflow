@@ -10,8 +10,8 @@ export type ScholarRow = {
   training_level: string | null;
   research_area: string | null;
   progress: string | null;
-  adrc_affiliated: number;
-  adrd_field: number;
+  adrc_affiliated: number | null;
+  adrd_field: number | null;
   mentors: string | null;
   primary_preceptor: string | null;
   project_title: string | null;

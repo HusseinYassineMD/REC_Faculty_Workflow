@@ -1,11 +1,13 @@
 import "server-only";
 
+import { unstable_noStore as noStore } from "next/cache";
 import type { FacultyRow, ProgramRow, ScholarRow } from "./types";
 import * as demo from "./rec-data-demo";
 
 export const isStaticSite = demo.isStaticSite;
 
 function db() {
+  noStore();
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   return require("@/lib/db") as typeof import("@/lib/db");
 }
@@ -43,4 +45,10 @@ export function getFaculty(id: number): FacultyRow | undefined {
 export function getProgram(id: number): ProgramRow | undefined {
   if (isStaticSite) return demo.listPrograms().find((p) => p.id === id);
   return db().getProgram(id);
+}
+
+/** Events added from the intake form. The speaker series stays in the bundled table. */
+export function listStoredEvents(): string[][] {
+  if (isStaticSite) return [];
+  return db().listStoredEvents();
 }

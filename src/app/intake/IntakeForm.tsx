@@ -1,43 +1,59 @@
 "use client";
 
 import Link from "next/link";
-import FormSection, { Field, FieldRow } from "@/components/FormSection";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Field, FieldRow } from "@/components/FormSection";
 import { useDemoToast } from "@/components/DemoToast";
-import {
-  OPEN_QUESTIONS,
-  SCHOLAR_DEFINITION,
-  TRAINEE_DEFINITION,
-} from "@/lib/rppr-standards";
+import { OPEN_QUESTIONS, SCHOLAR_DEFINITION, TRAINEE_DEFINITION } from "@/lib/rppr-standards";
+import { saveIntake } from "@/server/rec-actions";
 
 export default function IntakeForm() {
   const { show, Toast } = useDemoToast();
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
 
   return (
     <>
       {Toast}
       <form
-        className="form-shell"
+        className="form-shell panel-3d"
         onSubmit={(event) => {
           event.preventDefault();
-          show("Submitted. The sample roster stays as-is until the database save is connected.");
+          if (process.env.NEXT_PUBLIC_STATIC_SITE === "1") {
+            show("This preview does not save. Run the local app to store records in the database.");
+            return;
+          }
+          const data = new FormData(event.currentTarget);
+          setPending(true);
+          void saveIntake(data)
+            .then((result) => {
+              if ("error" in result) {
+                show(result.error);
+                setPending(false);
+                return;
+              }
+              router.push(result.href);
+              router.refresh();
+            })
+            .catch(() => {
+              show("Could not save to the database. Try again.");
+              setPending(false);
+            });
         }}
       >
         <div className="form-shell-header">
-          <h2 className="font-display text-2xl font-bold text-cpbh-navy">REC intake</h2>
+          <h2 className="font-display text-2xl font-bold text-cpbh-navy">Questions</h2>
           <p className="mt-1 text-sm text-slate-500">
-            One form for Table G1, Table G2, faculty, scholars, trainees, and programs. Every field is
-            optional — enter only the sections you have.
+            One form. Every question is optional — answer only what you have.
           </p>
-          <p className="mt-2 text-sm font-semibold text-cpbh-cardinal print:hidden">
+          <p className="mt-2 text-sm font-semibold text-cpbh-cardinal">
             Text in red brackets are open questions to confirm with REC leadership.
           </p>
         </div>
 
-        <div className="form-shell-body space-y-6">
-          <FormSection
-            title="Scholar / trainee"
-            description="Fields that feed Table G1. Scholars and trainees use this same section."
-          >
+        <div className="form-shell-body">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Last name" name="last_name">
               <input id="last_name" name="last_name" />
             </Field>
@@ -51,7 +67,7 @@ export default function IntakeForm() {
               <input id="department" name="department" />
             </Field>
             <Field label="Cohort / training year" name="cohort_year">
-              <input id="cohort_year" name="cohort_year" placeholder="2025–2026" />
+              <input id="cohort_year" name="cohort_year" />
             </Field>
             <Field label="Current or past" name="current_or_past" question={OPEN_QUESTIONS.currentOrPast}>
               <select id="current_or_past" name="current_or_past" defaultValue="">
@@ -73,14 +89,9 @@ export default function IntakeForm() {
               </select>
             </Field>
             <Field label="Level of training" name="training_level">
-              <input id="training_level" name="training_level" placeholder="PhD student or candidate" />
+              <input id="training_level" name="training_level" />
             </Field>
-            <Field
-              label="Area of research"
-              name="research_area"
-              span2
-              question={OPEN_QUESTIONS.researchArea}
-            >
+            <Field label="Area of research" name="research_area" span2 question={OPEN_QUESTIONS.researchArea}>
               <textarea id="research_area" name="research_area" rows={3} />
             </Field>
             <Field label="Progress" name="progress" span2 question={OPEN_QUESTIONS.progress}>
@@ -137,7 +148,7 @@ export default function IntakeForm() {
               <input id="project_end_date" name="project_end_date" type="date" />
             </Field>
             <Field label="Grant mechanism" name="grant_mechanism">
-              <input id="grant_mechanism" name="grant_mechanism" placeholder="K99, F31, KL2…" />
+              <input id="grant_mechanism" name="grant_mechanism" />
             </Field>
             <Field label="Grant number" name="grant_number">
               <input id="grant_number" name="grant_number" />
@@ -158,27 +169,21 @@ export default function IntakeForm() {
               <input id="budget_annual" name="budget_annual" type="number" step="0.01" />
             </Field>
             <Field label="Fiscal year" name="budget_fiscal_year">
-              <input id="budget_fiscal_year" name="budget_fiscal_year" placeholder="FY2026" />
+              <input id="budget_fiscal_year" name="budget_fiscal_year" />
             </Field>
-            <Field label="Scholar / trainee notes" name="scholar_notes" span2>
-              <textarea id="scholar_notes" name="scholar_notes" rows={2} />
+            <Field label="Notes" name="notes" span2>
+              <textarea id="notes" name="notes" rows={2} />
             </Field>
-          </FormSection>
-
-          <FormSection
-            title="Faculty"
-            description="Participating REC faculty — title, department, theme, and research area."
-          >
-            <Field label="Last name" name="faculty_last_name">
+            <Field label="Faculty last name" name="faculty_last_name">
               <input id="faculty_last_name" name="faculty_last_name" />
             </Field>
-            <Field label="First name" name="faculty_first_name">
+            <Field label="Faculty first name" name="faculty_first_name">
               <input id="faculty_first_name" name="faculty_first_name" />
             </Field>
             <Field label="Title" name="title">
               <input id="title" name="title" />
             </Field>
-            <Field label="Email" name="faculty_email">
+            <Field label="Faculty email" name="faculty_email">
               <input id="faculty_email" name="faculty_email" type="email" />
             </Field>
             <Field label="Institution / department" name="institution_department" span2>
@@ -194,7 +199,7 @@ export default function IntakeForm() {
                 <option value="No">No</option>
               </select>
             </Field>
-            <Field label="Research area" name="faculty_research_area" span2>
+            <Field label="Faculty research area" name="faculty_research_area" span2>
               <textarea id="faculty_research_area" name="faculty_research_area" rows={3} />
             </Field>
             <FieldRow>
@@ -205,15 +210,6 @@ export default function IntakeForm() {
                 <input id="mentor_active_end" name="mentor_active_end" type="date" />
               </Field>
             </FieldRow>
-            <Field label="Faculty notes" name="faculty_notes" span2>
-              <textarea id="faculty_notes" name="faculty_notes" rows={2} />
-            </Field>
-          </FormSection>
-
-          <FormSection
-            title="Training program"
-            description="ADRD and minority scholar programs — trainees per year, focus, and preceptor."
-          >
             <Field label="Program name" name="program" span2>
               <input id="program" name="program" />
             </Field>
@@ -235,15 +231,6 @@ export default function IntakeForm() {
             <Field label="Program end" name="program_end">
               <input id="program_end" name="program_end" type="date" />
             </Field>
-            <Field label="Program notes" name="program_notes" span2>
-              <textarea id="program_notes" name="program_notes" rows={2} />
-            </Field>
-          </FormSection>
-
-          <FormSection
-            title="REC event"
-            description="Fields that feed Table G2. One event per submission."
-          >
             <Field label="Event, date(s), sponsors" name="event_title" span2>
               <textarea id="event_title" name="event_title" rows={3} />
             </Field>
@@ -259,12 +246,12 @@ export default function IntakeForm() {
             <Field label="Other information" name="event_other" span2>
               <textarea id="event_other" name="event_other" rows={3} />
             </Field>
-          </FormSection>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3 border-t border-slate-100 bg-slate-50/80 px-6 py-5 sm:px-8">
-          <button type="submit" className="btn-primary">
-            Submit
+          <button type="submit" className="btn-primary disabled:cursor-not-allowed disabled:opacity-60" disabled={pending}>
+            {pending ? "Saving…" : "Submit"}
           </button>
           <Link href="/dashboard" className="btn-secondary">
             Cancel

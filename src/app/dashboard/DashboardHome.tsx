@@ -2,7 +2,7 @@ import Link from "next/link";
 import AppShell from "@/components/AppShell";
 import StatCard from "@/components/StatCard";
 import { listFaculty, listPrograms, listScholars } from "@/lib/rec-data";
-import type { FacultyRow, ProgramRow, ScholarRow } from "@/lib/types";
+import { FacultyCard, ProgramCard, ScholarCard } from "./RosterCards";
 
 function isCurrent(value: string) {
   return value.toLowerCase().startsWith("current");
@@ -13,24 +13,6 @@ function byLastName<T extends { last_name: string; current_or_past?: string }>(a
     Number(isCurrent(b.current_or_past ?? "")) - Number(isCurrent(a.current_or_past ?? ""));
   if (status !== 0) return status;
   return a.last_name.localeCompare(b.last_name, undefined, { sensitivity: "base" });
-}
-
-function NameBox({
-  title,
-  detail,
-  pill,
-}: {
-  title: string;
-  detail?: string | null;
-  pill?: string;
-}) {
-  return (
-    <article className="record-card">
-      <h3 className="font-display text-lg font-semibold text-cpbh-navy">{title}</h3>
-      {pill ? <span className="pill-teal w-fit">{pill}</span> : null}
-      {detail ? <p className="text-sm text-slate-600">{detail}</p> : null}
-    </article>
-  );
 }
 
 function RosterSection({
@@ -46,7 +28,7 @@ function RosterSection({
 }) {
   return (
     <section className="mb-10">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3 rounded-2xl bg-white/95 px-4 py-3 shadow-sm">
+      <div className="section-shelf">
         <div>
           <h2 className="font-display text-xl font-bold text-cpbh-navy">{title}</h2>
           <p className="mt-1 text-sm text-slate-500">{description}</p>
@@ -61,8 +43,14 @@ function RosterSection({
 }
 
 export default function DashboardHome() {
-  const scholars = listScholars().filter((s) => s.scholar_or_trainee.toLowerCase().includes("scholar"));
-  const trainees = listScholars().filter((s) => s.scholar_or_trainee.toLowerCase().includes("trainee"));
+  const people = listScholars();
+  const scholars = people.filter((s) => s.scholar_or_trainee.toLowerCase().includes("scholar"));
+  const trainees = people.filter((s) => s.scholar_or_trainee.toLowerCase().includes("trainee"));
+  const unlabeled = people.filter(
+    (s) =>
+      !s.scholar_or_trainee.toLowerCase().includes("scholar") &&
+      !s.scholar_or_trainee.toLowerCase().includes("trainee")
+  );
   const faculty = [...listFaculty()].sort((a, b) =>
     a.last_name.localeCompare(b.last_name, undefined, { sensitivity: "base" })
   );
@@ -88,7 +76,7 @@ export default function DashboardHome() {
         viewHref="/views?tab=scholars&kind=Scholar"
       >
         {scholars.sort(byLastName).map((s) => (
-          <ScholarBox key={s.id} person={s} />
+          <ScholarCard key={s.id} person={s} />
         ))}
       </RosterSection>
 
@@ -98,9 +86,21 @@ export default function DashboardHome() {
         viewHref="/views?tab=scholars&kind=Trainee"
       >
         {trainees.sort(byLastName).map((s) => (
-          <ScholarBox key={s.id} person={s} />
+          <ScholarCard key={s.id} person={s} />
         ))}
       </RosterSection>
+
+      {unlabeled.length > 0 ? (
+        <RosterSection
+          title="Added without a label"
+          description="Entered on the intake form without scholar or trainee. They are in Views and Table G1."
+          viewHref="/views?tab=scholars"
+        >
+          {unlabeled.sort(byLastName).map((s) => (
+            <ScholarCard key={s.id} person={s} />
+          ))}
+        </RosterSection>
+      ) : null}
 
       <RosterSection
         title="Faculty"
@@ -108,7 +108,7 @@ export default function DashboardHome() {
         viewHref="/views?tab=faculty"
       >
         {faculty.map((f) => (
-          <FacultyBox key={f.id} person={f} />
+          <FacultyCard key={f.id} person={f} />
         ))}
       </RosterSection>
 
@@ -118,32 +118,10 @@ export default function DashboardHome() {
         viewHref="/views?tab=programs"
       >
         {programs.map((p) => (
-          <ProgramBox key={p.id} program={p} />
+          <ProgramCard key={p.id} program={p} />
         ))}
       </RosterSection>
     </AppShell>
   );
 }
 
-function ScholarBox({ person }: { person: ScholarRow }) {
-  return (
-    <NameBox
-      title={`${person.first_name} ${person.last_name}`}
-      pill={person.current_or_past}
-      detail={person.training_level || person.department}
-    />
-  );
-}
-
-function FacultyBox({ person }: { person: FacultyRow }) {
-  return (
-    <NameBox
-      title={`${person.first_name} ${person.last_name}${person.executive_committee ? " *" : ""}`}
-      detail={person.title || person.institution_department}
-    />
-  );
-}
-
-function ProgramBox({ program }: { program: ProgramRow }) {
-  return <NameBox title={program.program} detail={program.preceptor ? `Preceptor: ${program.preceptor}` : program.focus} />;
-}

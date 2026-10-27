@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS scholars_trainees (
   training_level TEXT,
   research_area TEXT,
   progress TEXT,
-  adrc_affiliated INTEGER NOT NULL DEFAULT 1,
-  adrd_field INTEGER NOT NULL DEFAULT 1,
+  adrc_affiliated INTEGER,
+  adrd_field INTEGER,
   mentors TEXT,
   primary_preceptor TEXT,
   project_title TEXT,
@@ -65,6 +65,16 @@ CREATE TABLE IF NOT EXISTS scholars_trainees (
   form_status TEXT NOT NULL DEFAULT 'submitted',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS rec_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_title TEXT NOT NULL,
+  event_description TEXT,
+  attendance TEXT,
+  platform TEXT,
+  event_other TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS report_snapshots (

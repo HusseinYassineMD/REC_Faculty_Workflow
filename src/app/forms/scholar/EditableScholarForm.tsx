@@ -53,7 +53,7 @@ export default function EditableScholarForm({
               <input id="department" name="department" defaultValue={v("department")} />
             </Field>
             <Field label="Cohort / training year" name="cohort_year">
-              <input id="cohort_year" name="cohort_year" placeholder="2025–2026" defaultValue={v("cohort_year")} />
+              <input id="cohort_year" name="cohort_year" defaultValue={v("cohort_year")} />
             </Field>
             <Field
               label="Current or past"
@@ -149,7 +149,7 @@ export default function EditableScholarForm({
           </FormSection>
           <FormSection title="Grant timeline">
             <Field label="Mechanism" name="grant_mechanism">
-              <input id="grant_mechanism" name="grant_mechanism" placeholder="K99, F31, KL2…" defaultValue={v("grant_mechanism")} />
+              <input id="grant_mechanism" name="grant_mechanism" defaultValue={v("grant_mechanism")} />
             </Field>
             <Field label="Grant number" name="grant_number">
               <input id="grant_number" name="grant_number" defaultValue={v("grant_number")} />
@@ -172,7 +172,7 @@ export default function EditableScholarForm({
               <input id="budget_annual" name="budget_annual" type="number" step="0.01" defaultValue={v("budget_annual")} />
             </Field>
             <Field label="Fiscal year" name="budget_fiscal_year">
-              <input id="budget_fiscal_year" name="budget_fiscal_year" placeholder="FY2026" defaultValue={v("budget_fiscal_year")} />
+              <input id="budget_fiscal_year" name="budget_fiscal_year" defaultValue={v("budget_fiscal_year")} />
             </Field>
             <Field label="Notes" name="notes" span2>
               <textarea id="notes" name="notes" rows={2} defaultValue={v("notes")} />

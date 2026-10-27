@@ -19,7 +19,7 @@ export default function SiteNav() {
   const pathname = normalize(usePathname() || "/");
 
   return (
-    <nav className="mt-6 flex flex-wrap gap-2">
+    <nav className="nav-dock">
       {nav.map((item) => {
         const active = item.match.includes(pathname);
         return (
@@ -28,8 +28,8 @@ export default function SiteNav() {
             href={item.href}
             className={`rounded-full px-4 py-2 text-xs font-semibold transition sm:text-sm ${
               active
-                ? "bg-cpbh-gold text-cpbh-navy shadow-glow"
-                : "border border-white/20 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+                ? "bg-cpbh-gold text-cpbh-navy shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_8px_16px_-8px_rgba(0,0,0,0.45)]"
+                : "text-white/90 hover:bg-white/15 hover:text-white"
             }`}
           >
             {item.label}

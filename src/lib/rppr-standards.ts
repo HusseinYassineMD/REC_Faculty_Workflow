@@ -1,3 +1,4 @@
+import recEvents from "@/data/rec-events.json";
 import type { FacultyRow, ProgramRow, ScholarRow } from "./types";
 
 /**
@@ -46,6 +47,9 @@ export const TABLE_G2_HEADERS = [
   "Other Information",
 ] as const;
 
+/** REC Speaker Series sessions mapped onto the NACC Table G2 columns. */
+export const TABLE_G2_ROWS: string[][] = recEvents as string[][];
+
 export const SCHOLAR_DEFINITION =
   "REC Scholars: early career investigators selected by the ADRC for structured educational programming and comprehensive ADRD mentorship (often 3–5 years tracking).";
 
@@ -75,14 +79,16 @@ export function sortScholarsForTableG1(rows: ScholarRow[]): ScholarRow[] {
 }
 
 export function formatCurrentOrPastTrainee(r: ScholarRow): string {
-  const status = r.current_or_past || "Current";
+  const status = (r.current_or_past ?? "").trim();
   if (r.cohort_year?.trim()) {
-    return `${status} (${r.cohort_year.trim()})`;
+    const year = r.cohort_year.trim();
+    return status ? `${status} (${year})` : year;
   }
   if (r.mentorship_start_date || r.mentorship_end_date) {
     const start = r.mentorship_start_date ?? "";
     const end = r.mentorship_end_date ?? "";
-    if (start || end) return `${status} (${start}${start && end ? "–" : ""}${end})`;
+    const range = `${start}${start && end ? "–" : ""}${end}`;
+    return status ? `${status} (${range})` : range;
   }
   return status;
 }
@@ -100,16 +106,22 @@ export function truncateResearchArea(text: string | null | undefined, max = 60):
   return `${s.slice(0, max - 1)}…`;
 }
 
+export function yesNoCell(value: number | null | undefined): string {
+  if (value === 1) return "Yes";
+  if (value === 0) return "No";
+  return "";
+}
+
 export function scholarToTableG1Row(r: ScholarRow): string[] {
   return [
-    `${r.last_name}, ${r.first_name}`,
+    `${r.last_name}, ${r.first_name}`.replace(/^,\s*|,\s*$/g, "").trim(),
     formatCurrentOrPastTrainee(r),
     formatScholarOrTraineeLabel(r),
     r.training_level ?? "",
     truncateResearchArea(r.research_area),
     r.progress ?? "",
-    r.adrc_affiliated ? "Yes" : "No",
-    r.adrd_field ? "Yes" : "No",
+    yesNoCell(r.adrc_affiliated),
+    yesNoCell(r.adrd_field),
   ];
 }
 
@@ -173,7 +185,7 @@ export function scholarToViewRow(r: ScholarRow): string[] {
     formatScholarOrTraineeLabel(r),
     r.training_level ?? "",
     r.research_area ?? "",
-    r.adrc_affiliated ? "Yes" : "No",
-    r.adrd_field ? "Yes" : "No",
+    yesNoCell(r.adrc_affiliated),
+    yesNoCell(r.adrd_field),
   ];
 }

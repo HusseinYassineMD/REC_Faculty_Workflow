@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import DeployVersionCheck from "@/components/DeployVersionCheck";
+import SavedBanner from "@/components/SavedBanner";
 import SiteNav from "@/components/SiteNav";
 import StaticSiteBanner from "@/components/StaticSiteBanner";
 import { LINKS } from "@/lib/paths";
@@ -50,6 +52,9 @@ export default function AppShell({
       <main className="relative z-10 mx-auto max-w-6xl px-4 pb-4 pt-2 sm:px-6">
         <DeployVersionCheck />
         <StaticSiteBanner />
+        <Suspense fallback={null}>
+          <SavedBanner />
+        </Suspense>
         {children}
       </main>
 

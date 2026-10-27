@@ -5,7 +5,7 @@ export default function IntakePage() {
   return (
     <AppShell
       title="Intake form"
-      subtitle="A single form for scholars, trainees, faculty, programs, and REC events."
+      subtitle="Answer any of the questions. Nothing is required."
     >
       <IntakeForm />
     </AppShell>
