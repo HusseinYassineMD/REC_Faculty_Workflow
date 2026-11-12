@@ -5,6 +5,6 @@ export async function GET(req: Request) {
   const asOf = url.searchParams.get("as_of") ?? new Date().toISOString().slice(0, 10);
   const reportingYear =
     url.searchParams.get("reporting_year") ?? new Date().getFullYear().toString();
-  const payload = buildReportPayload(asOf, reportingYear);
+  const payload = await buildReportPayload(asOf, reportingYear);
   return Response.json(payload);
 }

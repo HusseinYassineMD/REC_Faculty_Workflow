@@ -1,7 +1,7 @@
 import path from "path";
 import { CLINICAL_REC_DIR } from "./paths";
 import { writeCsv } from "./csv";
-import { getDb } from "./db";
+import { insertReportSnapshot } from "./db";
 import { listFaculty, listPrograms, listScholars } from "./rec-data";
 import type { ScholarRow } from "./types";
 import { buildReportPayload, composeProgress } from "./report-payload";
@@ -38,10 +38,10 @@ function composeNotes(r: ScholarRow): string {
   return notes || json;
 }
 
-export function writeClinicalCsvs(): string[] {
-  const scholars = listScholars();
-  const faculty = listFaculty();
-  const programs = listPrograms();
+export async function writeClinicalCsvs(): Promise<string[]> {
+  const scholars = await listScholars();
+  const faculty = await listFaculty();
+  const programs = await listPrograms();
 
   const scholarRows = scholars.map((r) => ({
     id: String(r.id),
@@ -118,12 +118,7 @@ export function writeClinicalCsvs(): string[] {
 
 export { buildReportPayload } from "./report-payload";
 
-export function saveSnapshot(asOf: string, reportingYear: string, label: string) {
-  const payload = buildReportPayload(asOf, reportingYear);
-  getDb()
-    .prepare(
-      `INSERT INTO report_snapshots (label, as_of_date, reporting_year, payload_json)
-       VALUES (?, ?, ?, ?)`
-    )
-    .run(label, asOf, reportingYear, JSON.stringify(payload));
+export async function saveSnapshot(asOf: string, reportingYear: string, label: string) {
+  const payload = await buildReportPayload(asOf, reportingYear);
+  await insertReportSnapshot(label, asOf, reportingYear, JSON.stringify(payload));
 }

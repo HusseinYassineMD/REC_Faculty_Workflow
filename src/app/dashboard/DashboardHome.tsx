@@ -42,8 +42,8 @@ function RosterSection({
   );
 }
 
-export default function DashboardHome() {
-  const people = listScholars();
+export default async function DashboardHome() {
+  const people = await listScholars();
   const scholars = people.filter((s) => s.scholar_or_trainee.toLowerCase().includes("scholar"));
   const trainees = people.filter((s) => s.scholar_or_trainee.toLowerCase().includes("trainee"));
   const unlabeled = people.filter(
@@ -51,10 +51,10 @@ export default function DashboardHome() {
       !s.scholar_or_trainee.toLowerCase().includes("scholar") &&
       !s.scholar_or_trainee.toLowerCase().includes("trainee")
   );
-  const faculty = [...listFaculty()].sort((a, b) =>
+  const faculty = [...(await listFaculty())].sort((a, b) =>
     a.last_name.localeCompare(b.last_name, undefined, { sensitivity: "base" })
   );
-  const programs = [...listPrograms()].sort((a, b) =>
+  const programs = [...(await listPrograms())].sort((a, b) =>
     a.program.localeCompare(b.program, undefined, { sensitivity: "base" })
   );
 

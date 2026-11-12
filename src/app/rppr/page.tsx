@@ -11,10 +11,10 @@ import {
   scholarToTableG1Row,
 } from "@/lib/rppr-standards";
 
-export default function RpprPreviewPage() {
-  const scholars = sortScholarsForTableG1(listScholars());
+export default async function RpprPreviewPage() {
+  const scholars = sortScholarsForTableG1(await listScholars());
   const g1Rows = scholars.map(scholarToTableG1Row);
-  const g2Rows = [...TABLE_G2_ROWS, ...listStoredEvents()];
+  const g2Rows = [...TABLE_G2_ROWS, ...(await listStoredEvents())];
 
   return (
     <AppShell

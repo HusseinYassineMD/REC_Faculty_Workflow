@@ -4,13 +4,13 @@ import FormSection, { Field, FieldRow } from "@/components/FormSection";
 import { saveFaculty } from "@/server/rec-actions";
 import { getFaculty } from "@/lib/rec-data";
 
-export default function EditableFacultyForm({
+export default async function EditableFacultyForm({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
   const id = parseInt(searchParams.id ?? "0", 10);
-  const row = id > 0 ? getFaculty(id) : undefined;
+  const row = id > 0 ? await getFaculty(id) : undefined;
   const v = (key: keyof NonNullable<typeof row>) =>
     row ? String(row[key] ?? "") : "";
 

@@ -26,10 +26,10 @@ export function composeProgress(r: ScholarRow): string {
     .join(" · ");
 }
 
-export function buildReportPayload(asOf: string, reportingYear: string) {
-  const scholars = listScholars();
-  const faculty = listFaculty();
-  const programs = listPrograms();
+export async function buildReportPayload(asOf: string, reportingYear: string) {
+  const scholars = await listScholars();
+  const faculty = await listFaculty();
+  const programs = await listPrograms();
 
   const table1a = scholars.map((r) => ({
     id: r.id,

@@ -1,4 +1,6 @@
-# Full Next.js app with SQLite on a persistent disk (editable forms, saves).
+# Full Next.js app (editable forms and saves).
+# Set both Turso variables to use the shared database.
+# Leave both empty to use the SQLite file on the attached disk.
 # Connect this repo in Render: New > Blueprint > this file.
 services:
   - type: web
@@ -15,3 +17,7 @@ services:
         value: production
       - key: PORT
         value: "8766"
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false

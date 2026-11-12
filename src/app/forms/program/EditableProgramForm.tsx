@@ -4,13 +4,13 @@ import FormSection, { Field } from "@/components/FormSection";
 import { saveProgram } from "@/server/rec-actions";
 import { getProgram } from "@/lib/rec-data";
 
-export default function EditableProgramForm({
+export default async function EditableProgramForm({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
   const id = parseInt(searchParams.id ?? "0", 10);
-  const row = id > 0 ? getProgram(id) : undefined;
+  const row = id > 0 ? await getProgram(id) : undefined;
   const v = (key: keyof NonNullable<typeof row>) =>
     row ? String(row[key] ?? "") : "";
 

@@ -168,7 +168,7 @@ function refreshRoster() {
 
 function liveOnly(): { error: string } | null {
   if (process.env.NEXT_PUBLIC_STATIC_SITE === "1") {
-    return { error: "Editing is available when the app is running locally with the database." };
+    return { error: "Editing needs the app server and database. The public preview cannot save." };
   }
   return null;
 }
@@ -181,7 +181,7 @@ export async function updateScholarRecord(id: number, formData: FormData): Promi
     return { error: "Enter a first or last name." };
   }
   try {
-    if (!updateScholar(id, scholar)) return { error: "That person is no longer in the database." };
+    if (!(await updateScholar(id, scholar))) return { error: "That person is no longer in the database." };
     refreshRoster();
     return { ok: true };
   } catch {
@@ -193,7 +193,7 @@ export async function deleteScholarRecord(id: number): Promise<{ error: string }
   const blocked = liveOnly();
   if (blocked) return blocked;
   try {
-    if (!deleteScholar(id)) return { error: "That person is no longer in the database." };
+    if (!(await deleteScholar(id))) return { error: "That person is no longer in the database." };
     refreshRoster();
     return { ok: true };
   } catch {
@@ -209,7 +209,7 @@ export async function updateFacultyRecord(id: number, formData: FormData): Promi
     return { error: "Enter a first or last name." };
   }
   try {
-    if (!updateFaculty(id, faculty)) return { error: "That faculty member is no longer in the database." };
+    if (!(await updateFaculty(id, faculty))) return { error: "That faculty member is no longer in the database." };
     refreshRoster();
     return { ok: true };
   } catch {
@@ -221,7 +221,7 @@ export async function deleteFacultyRecord(id: number): Promise<{ error: string }
   const blocked = liveOnly();
   if (blocked) return blocked;
   try {
-    if (!deleteFaculty(id)) return { error: "That faculty member is no longer in the database." };
+    if (!(await deleteFaculty(id))) return { error: "That faculty member is no longer in the database." };
     refreshRoster();
     return { ok: true };
   } catch {
@@ -235,7 +235,7 @@ export async function updateProgramRecord(id: number, formData: FormData): Promi
   const program = programFromForm(formData);
   if (!program.program) return { error: "Enter a program name." };
   try {
-    if (!updateProgram(id, program)) return { error: "That program is no longer in the database." };
+    if (!(await updateProgram(id, program))) return { error: "That program is no longer in the database." };
     refreshRoster();
     return { ok: true };
   } catch {
@@ -247,7 +247,7 @@ export async function deleteProgramRecord(id: number): Promise<{ error: string }
   const blocked = liveOnly();
   if (blocked) return blocked;
   try {
-    if (!deleteProgram(id)) return { error: "That program is no longer in the database." };
+    if (!(await deleteProgram(id))) return { error: "That program is no longer in the database." };
     refreshRoster();
     return { ok: true };
   } catch {
@@ -257,7 +257,7 @@ export async function deleteProgramRecord(id: number): Promise<{ error: string }
 
 export async function saveIntake(formData: FormData): Promise<{ error: string } | { href: string }> {
   if (process.env.NEXT_PUBLIC_STATIC_SITE === "1") {
-    return { error: "Saving is available when the app is running locally with the database." };
+    return { error: "Saving needs the app server and database. The public preview cannot save." };
   }
 
   const scholar: ScholarInsert | null = anyText(formData, personKeys) ? scholarFromForm(formData) : null;
@@ -282,7 +282,7 @@ export async function saveIntake(formData: FormData): Promise<{ error: string } 
   }
 
   try {
-    const saved = saveIntakeRows({ scholar, faculty, program, event });
+    const saved = await saveIntakeRows({ scholar, faculty, program, event });
     refreshRoster();
     const label = saved.join(", ");
     const href =

@@ -19,6 +19,21 @@ npm run dev
 
 Open **http://127.0.0.1:8766/**
 
+## Database
+
+Local runs use a SQLite file at `data/rec_workflow.sqlite`. To share one roster, use a free [Turso](https://turso.tech/pricing) database (SQLite, no credit card). The free plan covers this app: 5 GB storage, 100 databases, and far more reads and writes than a faculty roster needs.
+
+```bash
+turso auth login
+turso db create rec-faculty
+turso db show rec-faculty --url
+turso db tokens create rec-faculty
+```
+
+Put the URL and token in `.env` (see `.env.example`). Restart `npm run dev`. The app creates the tables and loads the current roster the first time it connects.
+
+Leave both variables empty to keep using the local file. The GitHub Pages preview stays read-only; saving needs this app server, because the database token never goes in the browser.
+
 ## Pages
 
 | Page | URL |

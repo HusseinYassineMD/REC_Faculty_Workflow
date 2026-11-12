@@ -15,7 +15,7 @@ const nextConfig = {
     NEXT_PUBLIC_DEPLOY_SHA: process.env.NEXT_PUBLIC_DEPLOY_SHA ?? "",
   },
   experimental: {
-    serverComponentsExternalPackages: ["better-sqlite3"],
+    serverComponentsExternalPackages: ["better-sqlite3", "@libsql/client"],
   },
 };
 

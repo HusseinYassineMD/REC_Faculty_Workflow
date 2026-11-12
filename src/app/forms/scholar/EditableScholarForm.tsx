@@ -9,13 +9,13 @@ import {
   TRAINEE_DEFINITION,
 } from "@/lib/rppr-standards";
 
-export default function EditableScholarForm({
+export default async function EditableScholarForm({
   searchParams,
 }: {
   searchParams: { id?: string };
 }) {
   const id = parseInt(searchParams.id ?? "0", 10);
-  const row = id > 0 ? getScholar(id) : undefined;
+  const row = id > 0 ? await getScholar(id) : undefined;
   const v = (key: keyof NonNullable<typeof row>) =>
     row ? String(row[key] ?? "") : "";
 

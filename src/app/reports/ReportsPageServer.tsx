@@ -11,7 +11,7 @@ export default async function ReportsPageServer({
   const asOf = searchParams.as_of ?? new Date().toISOString().slice(0, 10);
   const reportingYear =
     searchParams.reporting_year ?? new Date().getFullYear().toString();
-  const payload = buildReportPayload(asOf, reportingYear);
+  const payload = await buildReportPayload(asOf, reportingYear);
 
   const SaveActions = (await import("./ReportSaveActions")).default;
 
@@ -53,7 +53,7 @@ export default async function ReportsPageServer({
   );
 }
 
-function ReportsBody({ payload }: { payload: ReturnType<typeof buildReportPayload> }) {
+function ReportsBody({ payload }: { payload: Awaited<ReturnType<typeof buildReportPayload>> }) {
   return (
     <>
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
