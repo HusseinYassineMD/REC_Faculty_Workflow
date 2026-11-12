@@ -3,7 +3,7 @@ import "server-only";
 import fs from "fs";
 import path from "path";
 import type { Client, InArgs, InValue, ResultSet } from "@libsql/client";
-import Database from "better-sqlite3";
+import type Sqlite from "better-sqlite3";
 import { DB_PATH } from "./paths";
 
 export type SqlValue = string | number | bigint | null;
@@ -59,25 +59,25 @@ function rowsOf<T>(result: ResultSet): T[] {
   return result.rows.map((row) => ({ ...row }) as T);
 }
 
-function localRun(stmt: Database.Statement, args?: SqlArgs) {
+function localRun(stmt: Sqlite.Statement, args?: SqlArgs) {
   if (args === undefined) return stmt.run();
   if (Array.isArray(args)) return stmt.run(...args);
   return stmt.run(normalizeRecord(args));
 }
 
-function localGet(stmt: Database.Statement, args?: SqlArgs) {
+function localGet(stmt: Sqlite.Statement, args?: SqlArgs) {
   if (args === undefined) return stmt.get();
   if (Array.isArray(args)) return stmt.get(...args);
   return stmt.get(normalizeRecord(args));
 }
 
-function localAll(stmt: Database.Statement, args?: SqlArgs) {
+function localAll(stmt: Sqlite.Statement, args?: SqlArgs) {
   if (args === undefined) return stmt.all();
   if (Array.isArray(args)) return stmt.all(...args);
   return stmt.all(normalizeRecord(args));
 }
 
-function wrapLocal(database: Database.Database): SqlDb {
+function wrapLocal(database: Sqlite.Database): SqlDb {
   return {
     async exec(sql) {
       database.exec(sql);
@@ -145,6 +145,7 @@ export async function createSqlDb(remote: RemoteConfig | null): Promise<SqlDb> {
   }
 
   fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+  const { default: Database } = await import("better-sqlite3");
   const database = new Database(DB_PATH);
   database.pragma("journal_mode = WAL");
   return wrapLocal(database);
