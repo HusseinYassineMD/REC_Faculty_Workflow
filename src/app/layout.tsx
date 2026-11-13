@@ -12,7 +12,7 @@ const display = Playfair_Display({
 export const metadata: Metadata = {
   title: "REC Faculty & RPPR Workflow | USC ADRC",
   description:
-    "Dashboard and intake forms for REC scholars, faculty, training programs, and NACC RPPR reporting.",
+    "Overview, intake, and RPPR tables for REC scholars, faculty, training programs, and NACC reporting.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

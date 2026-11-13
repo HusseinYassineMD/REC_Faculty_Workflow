@@ -12,8 +12,8 @@ export default async function ViewsPage() {
 
   return (
     <AppShell
-      title="Views"
-      subtitle="Filter the roster, check the people you want, and export that selection as CSV."
+      title="Overview"
+      subtitle="Scholars and trainees, faculty, and training programs. Filter the roster, then export the rows you need."
     >
       <Suspense fallback={<p className="text-sm text-slate-500">Loading views…</p>}>
         <ViewsBrowser scholars={scholars} faculty={faculty} programs={programs} />

@@ -59,7 +59,7 @@ export default async function EditableProgramForm({
           <button type="submit" className="btn-primary">
             Save program
           </button>
-          <Link href="/dashboard" className="btn-secondary">
+          <Link href="/" className="btn-secondary">
             Cancel
           </Link>
         </div>

@@ -253,7 +253,7 @@ export default function IntakeForm() {
           <button type="submit" className="btn-primary disabled:cursor-not-allowed disabled:opacity-60" disabled={pending}>
             {pending ? "Saving…" : "Submit"}
           </button>
-          <Link href="/dashboard" className="btn-secondary">
+          <Link href="/" className="btn-secondary">
             Cancel
           </Link>
         </div>

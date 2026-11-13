@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useDemoToast } from "@/components/DemoToast";
 
-export default function PreviewFormFooter({ backHref = "/dashboard" }: { backHref?: string }) {
+export default function PreviewFormFooter({ backHref = "/" }: { backHref?: string }) {
   const { show, Toast } = useDemoToast();
 
   return (

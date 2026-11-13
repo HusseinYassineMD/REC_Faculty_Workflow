@@ -14,7 +14,7 @@ export default function GlobalError({
         <p style={{ color: "#444", fontSize: "0.9rem" }}>{error.message}</p>
         <p style={{ fontSize: "0.85rem", color: "#666" }}>The roster is still on the server. Try again.</p>
         <p>
-          <a href="/dashboard">Back to the dashboard</a>
+          <a href="/">Back to the overview</a>
         </p>
         <button
           type="button"

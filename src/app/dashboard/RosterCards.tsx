@@ -183,7 +183,7 @@ export function ScholarCard({ person, menuOnly = false }: { person: ScholarRow; 
       {mode === "delete" ? (
         <DeleteDialog
           title={title}
-          detail="This removes them from the dashboard, Views, and Table G1."
+          detail="This removes them from the overview and Table G1."
           pending={pending}
           error={error}
           onCancel={close}
@@ -384,7 +384,7 @@ export function FacultyCard({ person, menuOnly = false }: { person: FacultyRow; 
       {mode === "delete" ? (
         <DeleteDialog
           title={title}
-          detail="This removes them from the dashboard and the Faculty view."
+          detail="This removes them from the faculty list."
           pending={pending}
           error={error}
           onCancel={close}
@@ -515,7 +515,7 @@ export function ProgramCard({ program, menuOnly = false }: { program: ProgramRow
       {mode === "delete" ? (
         <DeleteDialog
           title={title}
-          detail="This removes the program from the dashboard and the Programs view."
+          detail="This removes the program from the overview."
           pending={pending}
           error={error}
           onCancel={close}

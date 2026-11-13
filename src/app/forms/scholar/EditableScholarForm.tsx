@@ -183,7 +183,7 @@ export default async function EditableScholarForm({
           <button type="submit" className="btn-primary">
             Save record
           </button>
-          <Link href="/dashboard" className="btn-secondary">
+          <Link href="/" className="btn-secondary">
             Cancel
           </Link>
         </div>

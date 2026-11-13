@@ -1,5 +1,5 @@
-import DashboardHome from "./DashboardHome";
+import RedirectTo from "@/components/RedirectTo";
 
 export default function DashboardPage() {
-  return <DashboardHome />;
+  return <RedirectTo href="/" />;
 }

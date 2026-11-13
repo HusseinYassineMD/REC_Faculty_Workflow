@@ -288,7 +288,7 @@ export async function saveIntake(formData: FormData): Promise<{ error: string } 
     const href =
       saved.length === 1 && saved[0] === "event"
         ? `/rppr?saved=${encodeURIComponent(label)}`
-        : `/dashboard?saved=${encodeURIComponent(label)}`;
+        : `/?saved=${encodeURIComponent(label)}`;
     return { href };
   } catch (error) {
     console.error("Intake save failed.", error);

@@ -4,9 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const nav = [
-  { href: "/dashboard", label: "Dashboard", match: ["/", "/dashboard"] },
+  { href: "/", label: "Overview", match: ["/", "/views", "/dashboard", "/scholars", "/faculty", "/programs"] },
   { href: "/intake", label: "Intake form", match: ["/intake"] },
-  { href: "/views", label: "Views", match: ["/views", "/scholars", "/faculty", "/programs"] },
   { href: "/rppr", label: "RPPR", match: ["/rppr"] },
 ];
 
