@@ -5,6 +5,7 @@ import {
   deleteFacultyRecord,
   deleteProgramRecord,
   deleteScholarRecord,
+  importExcelRoster,
   saveIntake,
   updateFacultyRecord,
   updateProgramRecord,
@@ -68,7 +69,7 @@ describe("intake, edit, and delete", () => {
           research_area: "Before edit",
         })
       )
-    ).resolves.toEqual({ href: "/dashboard?saved=scholar" });
+    ).resolves.toEqual({ href: "/?saved=scholar" });
 
     const created = (await listScholars()).find((row) => row.last_name === "Scholar" && row.first_name === "Unit");
     expect(created?.research_area).toBe("Before edit");
@@ -100,7 +101,7 @@ describe("intake, edit, and delete", () => {
   it("saves, edits, and deletes a faculty member", async () => {
     await expect(
       saveIntake(form({ faculty_first_name: "Unit", faculty_last_name: "Faculty", title: "Professor" }))
-    ).resolves.toEqual({ href: "/dashboard?saved=faculty" });
+    ).resolves.toEqual({ href: "/?saved=faculty" });
 
     const created = (await listFaculty()).find((row) => row.last_name === "Faculty" && row.first_name === "Unit");
     expect(created?.title).toBe("Professor");
@@ -119,7 +120,7 @@ describe("intake, edit, and delete", () => {
 
   it("saves, edits, and deletes a training program", async () => {
     await expect(saveIntake(form({ program: "Unit Program", focus: "Aging" }))).resolves.toEqual({
-      href: "/dashboard?saved=program",
+      href: "/?saved=program",
     });
 
     const created = (await listPrograms()).find((row) => row.program === "Unit Program");
@@ -156,5 +157,40 @@ describe("intake, edit, and delete", () => {
     await expect(saveIntake(form({ first_name: "A", last_name: "B" }))).resolves.toEqual({
       error: "Saving needs the app server and database. The public preview cannot save.",
     });
+    await expect(importExcelRoster([{ name: "Scholars and trainees", rows: [["Last name"], ["B"]] }])).resolves.toEqual({
+      error: "Importing needs the app server and database. The public preview cannot save.",
+    });
+  });
+
+  it("imports a spreadsheet row and updates that person without clearing other fields", async () => {
+    const created = await importExcelRoster([
+      {
+        name: "Scholars and trainees",
+        rows: [
+          ["Last name", "First name", "Scholar or trainee", "Current or past", "Area of research"],
+          ["Zzexcel", "Unit", "Scholar", "Past", "Imported topic"],
+        ],
+      },
+    ]);
+    expect(created).toEqual({ href: "/?saved=1%20scholar%2Ftrainee%20added" });
+    const person = (await listScholars()).find((row) => row.last_name === "Zzexcel" && row.first_name === "Unit");
+    expect(person?.current_or_past).toBe("Past");
+    expect(person?.research_area).toBe("Imported topic");
+
+    await expect(
+      importExcelRoster([
+        {
+          name: "Scholars and trainees",
+          rows: [
+            ["Last name", "First name", "Area of research"],
+            ["Zzexcel", "Unit", "Updated topic"],
+          ],
+        },
+      ])
+    ).resolves.toEqual({ href: "/?saved=1%20scholar%2Ftrainee%20updated" });
+    expect((await getScholar(person!.id))?.research_area).toBe("Updated topic");
+    expect((await getScholar(person!.id))?.current_or_past).toBe("Past");
+    expect((await getScholar(person!.id))?.scholar_or_trainee).toBe("Scholar");
+    await deleteScholarRecord(person!.id);
   });
 });

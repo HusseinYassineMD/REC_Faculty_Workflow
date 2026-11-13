@@ -31,6 +31,10 @@ export async function saveIntake(_formData: FormData): Promise<IntakeResult> {
   return { error: "This public site cannot store a new submission. The intake form saves on the local app." };
 }
 
+export async function importExcelRoster(_sheets: unknown): Promise<IntakeResult> {
+  return { error: "This public site cannot import a spreadsheet. Excel import saves on the local app." };
+}
+
 export async function saveScholar(_formData: FormData) {
   throw new Error("Not available on static demo site");
 }

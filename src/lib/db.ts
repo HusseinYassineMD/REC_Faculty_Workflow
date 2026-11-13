@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { CLINICAL_REC_DIR, DB_PATH } from "./paths";
 import { parseBool, parseCsv } from "./csv";
+import type { EventImport, FacultyImport, ProgramImport, ScholarImport } from "./excel-import";
 import type { FacultyRow, ProgramRow, ScholarRow } from "./types";
 import { seedFromDemoJson } from "./seed-demo-json";
 import { SCHEMA_SQL } from "./schema-sql";
@@ -450,6 +451,290 @@ export async function listStoredEvents(): Promise<string[][]> {
     row.event_other ?? "",
   ]);
 }
+
+export type ExcelWriteCounts = {
+  addedScholars: number;
+  updatedScholars: number;
+  addedFaculty: number;
+  updatedFaculty: number;
+  addedPrograms: number;
+  updatedPrograms: number;
+  addedEvents: number;
+};
+
+export async function applyExcelImport(input: {
+  scholars: ScholarImport[];
+  faculty: FacultyImport[];
+  programs: ProgramImport[];
+  events: EventImport[];
+}): Promise<ExcelWriteCounts> {
+  const database = await openDatabase();
+  const scholars = await database.all<ScholarRow>("SELECT * FROM scholars_trainees");
+  const faculty = await database.all<FacultyRow>("SELECT * FROM faculty");
+  const programs = await database.all<ProgramRow>("SELECT * FROM training_programs");
+  const scholarByName = new Map(scholars.map((row) => [personKey(row.last_name, row.first_name), row]));
+  const facultyByName = new Map(faculty.map((row) => [personKey(row.last_name, row.first_name), row]));
+  const programByName = new Map(programs.map((row) => [row.program.trim().toLowerCase(), row]));
+  const statements: SqlStatement[] = [];
+  const counts: ExcelWriteCounts = {
+    addedScholars: 0,
+    updatedScholars: 0,
+    addedFaculty: 0,
+    updatedFaculty: 0,
+    addedPrograms: 0,
+    updatedPrograms: 0,
+    addedEvents: 0,
+  };
+
+  for (const item of input.scholars) {
+    const existing = scholarByName.get(personKey(item.last_name, item.first_name));
+    const record = overlay(blankScholar(item), item);
+    if (existing) {
+      statements.push({ sql: SCHOLAR_UPDATE_SQL, args: { ...overlay(scholarInsert(existing), item), id: existing.id } });
+      counts.updatedScholars += 1;
+    } else {
+      statements.push({ sql: SCHOLAR_INSERT_SQL, args: record });
+      counts.addedScholars += 1;
+    }
+  }
+  for (const item of input.faculty) {
+    const existing = facultyByName.get(personKey(item.last_name, item.first_name));
+    if (existing) {
+      statements.push({ sql: FACULTY_UPDATE_SQL, args: { ...overlay(facultyInsert(existing), item), id: existing.id } });
+      counts.updatedFaculty += 1;
+    } else {
+      statements.push({ sql: FACULTY_INSERT_SQL, args: overlay(blankFaculty(item), item) });
+      counts.addedFaculty += 1;
+    }
+  }
+  for (const item of input.programs) {
+    const existing = programByName.get(item.program.trim().toLowerCase());
+    if (existing) {
+      statements.push({ sql: PROGRAM_UPDATE_SQL, args: { ...overlay(programInsert(existing), item), id: existing.id } });
+      counts.updatedPrograms += 1;
+    } else {
+      statements.push({ sql: PROGRAM_INSERT_SQL, args: overlay(blankProgram(item), item) });
+      counts.addedPrograms += 1;
+    }
+  }
+  for (const item of input.events) {
+    statements.push({
+      sql: `INSERT INTO rec_events (event_title, event_description, attendance, platform, event_other)
+            VALUES (@event_title, @event_description, @attendance, @platform, @event_other)`,
+      args: {
+        event_title: item.event_title,
+        event_description: item.event_description ?? null,
+        attendance: item.attendance ?? null,
+        platform: item.platform ?? null,
+        event_other: item.event_other ?? null,
+      },
+    });
+    counts.addedEvents += 1;
+  }
+
+  await database.batch(statements);
+  return counts;
+}
+
+function personKey(last: string, first: string) {
+  return `${last.trim().toLowerCase()}|${first.trim().toLowerCase()}`;
+}
+
+function overlay<T extends object>(base: T, patch: object): T {
+  const next = { ...base };
+  for (const [key, value] of Object.entries(patch)) {
+    if (value !== undefined && Object.prototype.hasOwnProperty.call(next, key)) {
+      (next as Record<string, unknown>)[key] = value;
+    }
+  }
+  return next;
+}
+
+function blankScholar(item: ScholarImport): ScholarInsert {
+  return {
+    last_name: item.last_name,
+    first_name: item.first_name,
+    email: null,
+    department: null,
+    cohort_year: null,
+    current_or_past: "",
+    scholar_or_trainee: "",
+    training_level: null,
+    research_area: null,
+    progress: null,
+    adrc_affiliated: null,
+    adrd_field: null,
+    mentors: null,
+    primary_preceptor: null,
+    project_title: null,
+    project_description: null,
+    project_start_date: null,
+    project_end_date: null,
+    mentorship_start_date: null,
+    mentorship_end_date: null,
+    grant_name: null,
+    grant_number: null,
+    grant_mechanism: null,
+    grant_start_date: null,
+    grant_end_date: null,
+    budget_total: null,
+    budget_annual: null,
+    budget_fiscal_year: null,
+    notes: null,
+  };
+}
+
+function scholarInsert(row: ScholarRow): ScholarInsert {
+  return {
+    last_name: row.last_name,
+    first_name: row.first_name,
+    email: row.email,
+    department: row.department,
+    cohort_year: row.cohort_year,
+    current_or_past: row.current_or_past,
+    scholar_or_trainee: row.scholar_or_trainee,
+    training_level: row.training_level,
+    research_area: row.research_area,
+    progress: row.progress,
+    adrc_affiliated: row.adrc_affiliated,
+    adrd_field: row.adrd_field,
+    mentors: row.mentors,
+    primary_preceptor: row.primary_preceptor,
+    project_title: row.project_title,
+    project_description: row.project_description,
+    project_start_date: row.project_start_date,
+    project_end_date: row.project_end_date,
+    mentorship_start_date: row.mentorship_start_date,
+    mentorship_end_date: row.mentorship_end_date,
+    grant_name: row.grant_name,
+    grant_number: row.grant_number,
+    grant_mechanism: row.grant_mechanism,
+    grant_start_date: row.grant_start_date,
+    grant_end_date: row.grant_end_date,
+    budget_total: row.budget_total,
+    budget_annual: row.budget_annual,
+    budget_fiscal_year: row.budget_fiscal_year,
+    notes: row.notes,
+  };
+}
+
+function blankFaculty(item: FacultyImport): FacultyInsert & { notes: string | null } {
+  return {
+    last_name: item.last_name,
+    first_name: item.first_name,
+    title: null,
+    institution_department: null,
+    theme: null,
+    research_area: null,
+    executive_committee: 0,
+    email: null,
+    mentor_active_start: null,
+    mentor_active_end: null,
+    notes: null,
+  };
+}
+
+function facultyInsert(row: FacultyRow): FacultyInsert & { notes: string | null } {
+  return {
+    last_name: row.last_name,
+    first_name: row.first_name,
+    title: row.title,
+    institution_department: row.institution_department,
+    theme: row.theme,
+    research_area: row.research_area,
+    executive_committee: row.executive_committee,
+    email: row.email,
+    mentor_active_start: row.mentor_active_start,
+    mentor_active_end: row.mentor_active_end,
+    notes: row.notes,
+  };
+}
+
+function blankProgram(item: ProgramImport): ProgramInsert & { notes: string | null } {
+  return {
+    program: item.program,
+    trainees_per_year: null,
+    minority_researchers: null,
+    focus: null,
+    preceptor: null,
+    program_start: null,
+    program_end: null,
+    notes: null,
+  };
+}
+
+function programInsert(row: ProgramRow): ProgramInsert & { notes: string | null } {
+  return {
+    program: row.program,
+    trainees_per_year: row.trainees_per_year,
+    minority_researchers: row.minority_researchers,
+    focus: row.focus,
+    preceptor: row.preceptor,
+    program_start: row.program_start,
+    program_end: row.program_end,
+    notes: row.notes,
+  };
+}
+
+const SCHOLAR_INSERT_SQL = `INSERT INTO scholars_trainees (
+  last_name, first_name, email, department, cohort_year, current_or_past,
+  scholar_or_trainee, training_level, research_area, progress,
+  adrc_affiliated, adrd_field, mentors, primary_preceptor,
+  project_title, project_description, project_start_date, project_end_date,
+  mentorship_start_date, mentorship_end_date,
+  grant_name, grant_number, grant_mechanism, grant_start_date, grant_end_date,
+  budget_total, budget_annual, budget_fiscal_year, notes, form_status
+) VALUES (
+  @last_name, @first_name, @email, @department, @cohort_year, @current_or_past,
+  @scholar_or_trainee, @training_level, @research_area, @progress,
+  @adrc_affiliated, @adrd_field, @mentors, @primary_preceptor,
+  @project_title, @project_description, @project_start_date, @project_end_date,
+  @mentorship_start_date, @mentorship_end_date,
+  @grant_name, @grant_number, @grant_mechanism, @grant_start_date, @grant_end_date,
+  @budget_total, @budget_annual, @budget_fiscal_year, @notes, 'submitted'
+)`;
+
+const SCHOLAR_UPDATE_SQL = `UPDATE scholars_trainees SET
+  last_name=@last_name, first_name=@first_name, email=@email, department=@department,
+  cohort_year=@cohort_year, current_or_past=@current_or_past, scholar_or_trainee=@scholar_or_trainee,
+  training_level=@training_level, research_area=@research_area, progress=@progress,
+  adrc_affiliated=@adrc_affiliated, adrd_field=@adrd_field, mentors=@mentors,
+  primary_preceptor=@primary_preceptor, project_title=@project_title,
+  project_description=@project_description, project_start_date=@project_start_date,
+  project_end_date=@project_end_date, mentorship_start_date=@mentorship_start_date,
+  mentorship_end_date=@mentorship_end_date, grant_name=@grant_name, grant_number=@grant_number,
+  grant_mechanism=@grant_mechanism, grant_start_date=@grant_start_date, grant_end_date=@grant_end_date,
+  budget_total=@budget_total, budget_annual=@budget_annual, budget_fiscal_year=@budget_fiscal_year,
+  notes=@notes, updated_at=datetime('now')
+WHERE id=@id`;
+
+const FACULTY_INSERT_SQL = `INSERT INTO faculty (
+  last_name, first_name, title, institution_department, theme, research_area,
+  executive_committee, email, mentor_active_start, mentor_active_end, notes
+) VALUES (
+  @last_name, @first_name, @title, @institution_department, @theme, @research_area,
+  @executive_committee, @email, @mentor_active_start, @mentor_active_end, @notes
+)`;
+
+const FACULTY_UPDATE_SQL = `UPDATE faculty SET
+  last_name=@last_name, first_name=@first_name, title=@title,
+  institution_department=@institution_department, theme=@theme, research_area=@research_area,
+  executive_committee=@executive_committee, email=@email,
+  mentor_active_start=@mentor_active_start, mentor_active_end=@mentor_active_end,
+  notes=@notes, updated_at=datetime('now')
+WHERE id=@id`;
+
+const PROGRAM_INSERT_SQL = `INSERT INTO training_programs (
+  program, trainees_per_year, minority_researchers, focus, preceptor, program_start, program_end, notes
+) VALUES (
+  @program, @trainees_per_year, @minority_researchers, @focus, @preceptor, @program_start, @program_end, @notes
+)`;
+
+const PROGRAM_UPDATE_SQL = `UPDATE training_programs SET
+  program=@program, trainees_per_year=@trainees_per_year, minority_researchers=@minority_researchers,
+  focus=@focus, preceptor=@preceptor, program_start=@program_start, program_end=@program_end,
+  notes=@notes, updated_at=datetime('now')
+WHERE id=@id`;
 
 export async function insertReportSnapshot(label: string, asOf: string, reportingYear: string, payloadJson: string) {
   const database = await openDatabase();

@@ -2,9 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  applyExcelImport,
   deleteFaculty,
   deleteProgram,
   deleteScholar,
+  listStoredEvents,
   saveIntakeRows,
   updateFaculty,
   updateProgram,
@@ -14,6 +16,8 @@ import {
   type ProgramInsert,
   type ScholarInsert,
 } from "@/lib/db";
+import { planFromSheets, type SheetGrid } from "@/lib/excel-import";
+import { TABLE_G2_ROWS } from "@/lib/rppr-standards";
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -294,6 +298,72 @@ export async function saveIntake(formData: FormData): Promise<{ error: string } 
     console.error("Intake save failed.", error);
     return { error: "Could not save to the database. Try again." };
   }
+}
+
+export async function importExcelRoster(sheets: SheetGrid[]): Promise<{ error: string } | { href: string }> {
+  const blocked = liveOnly();
+  if (blocked) return { error: "Importing needs the app server and database. The public preview cannot save." };
+  const safe = sanitizeSheets(sheets);
+  if (!safe) return { error: "That spreadsheet could not be read. Use the Excel template on this page." };
+
+  const plan = planFromSheets(safe);
+  const stored = await listStoredEvents();
+  const knownEvents = new Set(
+    [...TABLE_G2_ROWS.map((row) => row[0] ?? ""), ...stored.map((row) => row[0] ?? "")].map((title) => title.trim().toLowerCase())
+  );
+  const events = plan.events.filter((event) => !knownEvents.has(event.event_title.trim().toLowerCase()));
+  const skippedEvents = plan.events.length - events.length;
+  if (plan.scholars.length + plan.faculty.length + plan.programs.length + events.length === 0) {
+    return {
+      error:
+        skippedEvents > 0
+          ? "Those events are already on the report. Nothing new was imported."
+          : "No scholar, faculty, program, or event rows were found. Use the template column names, or fill in the intake form.",
+    };
+  }
+
+  try {
+    const counts = await applyExcelImport({ ...plan, events });
+    refreshRoster();
+    const summary = [
+      countPhrase(counts.addedScholars, "scholar/trainee added", "scholars/trainees added"),
+      countPhrase(counts.updatedScholars, "scholar/trainee updated", "scholars/trainees updated"),
+      countPhrase(counts.addedFaculty, "faculty added", "faculty added"),
+      countPhrase(counts.updatedFaculty, "faculty updated", "faculty updated"),
+      countPhrase(counts.addedPrograms, "program added", "programs added"),
+      countPhrase(counts.updatedPrograms, "program updated", "programs updated"),
+      countPhrase(counts.addedEvents, "event added", "events added"),
+      countPhrase(skippedEvents, "event already on the report", "events already on the report"),
+    ]
+      .filter(Boolean)
+      .join(", ");
+    return { href: `/?saved=${encodeURIComponent(summary)}` };
+  } catch (error) {
+    console.error("Excel import failed.", error);
+    return { error: "Could not import that spreadsheet. Try again." };
+  }
+}
+
+function countPhrase(count: number, one: string, many: string) {
+  if (count === 0) return "";
+  return `${count} ${count === 1 ? one : many}`;
+}
+
+function sanitizeSheets(input: SheetGrid[]): SheetGrid[] | null {
+  if (!Array.isArray(input) || input.length === 0 || input.length > 8) return null;
+  const sheets: SheetGrid[] = [];
+  let rowCount = 0;
+  for (const sheet of input) {
+    if (!sheet || typeof sheet.name !== "string" || !Array.isArray(sheet.rows) || sheet.rows.length > 1001) return null;
+    const rows = sheet.rows.map((row) => {
+      if (!Array.isArray(row)) return [];
+      return row.slice(0, 40).map((cell) => String(cell ?? "").slice(0, 4000));
+    });
+    rowCount += rows.length;
+    sheets.push({ name: sheet.name.slice(0, 80), rows });
+  }
+  if (rowCount > 4000) return null;
+  return sheets;
 }
 
 export async function saveScholar(_formData: FormData) {
