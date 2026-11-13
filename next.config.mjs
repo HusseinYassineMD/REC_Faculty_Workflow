@@ -9,6 +9,13 @@ const nextConfig = {
   assetPrefix: isPages ? `/${repo}/` : undefined,
   trailingSlash: true,
   images: { unoptimized: true },
+  async redirects() {
+    if (isPages) return [];
+    return [
+      { source: "/dashboard", destination: "/", permanent: true },
+      { source: "/dashboard/", destination: "/", permanent: true },
+    ];
+  },
   env: {
     NEXT_PUBLIC_STATIC_SITE: isPages ? "1" : "0",
     NEXT_PUBLIC_BASE_PATH: isPages ? `/${repo}` : "",
