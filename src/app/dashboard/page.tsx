@@ -1,5 +1,5 @@
-import RedirectTo from "@/components/RedirectTo";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-  return <RedirectTo href="/" />;
+  redirect("/");
 }
