@@ -6,6 +6,7 @@ import { CLINICAL_REC_DIR, DB_PATH } from "./paths";
 import { parseBool, parseCsv } from "./csv";
 import type { FacultyRow, ProgramRow, ScholarRow } from "./types";
 import { seedFromDemoJson } from "./seed-demo-json";
+import { SCHEMA_SQL } from "./schema-sql";
 import { createSqlDb, remoteDatabaseConfig, type SqlDb, type SqlStatement } from "./sql-db";
 
 let opening: Promise<SqlDb> | null = null;
@@ -24,8 +25,7 @@ async function initDatabase(): Promise<SqlDb> {
   const remote = remoteDatabaseConfig();
   try {
     const database = await createSqlDb(remote);
-    const schemaPath = path.join(process.cwd(), "src/lib/schema.sql");
-    await database.exec(fs.readFileSync(schemaPath, "utf-8"));
+    await database.exec(SCHEMA_SQL);
     await relaxScholarFlags(database);
     await seedIfEmpty(database);
     console.log(remote ? "REC database: Turso" : `REC database: local SQLite (${DB_PATH})`);
@@ -317,7 +317,7 @@ export async function saveIntakeRows(input: {
       )`,
       args: input.scholar,
     });
-    const kind = input.scholar.scholar_or_trainee.toLowerCase();
+    const kind = (input.scholar.scholar_or_trainee || "").toLowerCase();
     saved.push(kind.includes("trainee") ? "trainee" : kind.includes("scholar") ? "scholar" : "person");
   }
   if (input.faculty) {

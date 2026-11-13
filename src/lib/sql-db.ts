@@ -122,13 +122,18 @@ function wrapRemote(client: Client): SqlDb {
     },
     async batch(statements) {
       if (statements.length === 0) return;
-      await client.batch(
-        statements.map((statement) => ({
-          sql: statement.sql,
-          args: toInArgs(statement.args),
-        })),
-        "write"
-      );
+      const prepared = statements.map((statement) => ({
+        sql: statement.sql,
+        args: toInArgs(statement.args),
+      }));
+      try {
+        await client.batch(prepared, "write");
+      } catch (error) {
+        console.error("Turso batch failed, saving one statement at a time.", error);
+        for (const statement of prepared) {
+          await client.execute(statement);
+        }
+      }
     },
   };
 }
@@ -145,7 +150,10 @@ export async function createSqlDb(remote: RemoteConfig | null): Promise<SqlDb> {
   }
 
   fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  const { default: Database } = await import("better-sqlite3");
+  const { default: Database } = await import(
+    /* webpackIgnore: true */
+    "better-sqlite3"
+  );
   const database = new Database(DB_PATH);
   database.pragma("journal_mode = WAL");
   return wrapLocal(database);

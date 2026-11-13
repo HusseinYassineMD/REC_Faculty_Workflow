@@ -290,7 +290,8 @@ export async function saveIntake(formData: FormData): Promise<{ error: string } 
         ? `/rppr?saved=${encodeURIComponent(label)}`
         : `/dashboard?saved=${encodeURIComponent(label)}`;
     return { href };
-  } catch {
+  } catch (error) {
+    console.error("Intake save failed.", error);
     return { error: "Could not save to the database. Try again." };
   }
 }
