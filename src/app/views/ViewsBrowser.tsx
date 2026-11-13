@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { useDemoToast } from "@/components/DemoToast";
 import PrettyCell from "@/components/PrettyCell";
@@ -17,10 +17,11 @@ import {
   yesNoCell,
 } from "@/lib/rppr-standards";
 import type { FacultyRow, ProgramRow, ScholarRow } from "@/lib/types";
+import { FacultyCard, ProgramCard, ScholarCard } from "@/app/dashboard/RosterCards";
 
 type Tab = "scholars" | "faculty" | "programs";
 
-type VisibleRow = { key: string; cells: string[] };
+type VisibleRow = { key: string; cells: string[]; actions: ReactNode };
 
 const SCHOLAR_QUESTIONS: (string | null)[] = [
   null,
@@ -126,6 +127,7 @@ export default function ViewsBrowser({
     return sortScholarsForTableG1(filtered).map((row) => ({
       key: `s-${row.id}`,
       cells: scholarToViewRow(row),
+      actions: <ScholarCard person={row} menuOnly />,
     }));
   }, [scholars, status, kind, level, adrc, adrd, query]);
 
@@ -143,6 +145,7 @@ export default function ViewsBrowser({
       .map((row) => ({
         key: `f-${row.id}`,
         cells: [...facultyToExportRow(row), row.executive_committee ? "Yes (*)" : "No"],
+        actions: <FacultyCard person={row} menuOnly />,
       }));
   }, [faculty, theme, committee, query]);
 
@@ -155,7 +158,11 @@ export default function ViewsBrowser({
         return `${row.program} ${row.focus ?? ""} ${row.preceptor ?? ""}`.toLowerCase().includes(q);
       })
       .sort((a, b) => a.program.localeCompare(b.program, undefined, { sensitivity: "base" }))
-      .map((row) => ({ key: `p-${row.id}`, cells: programToExportRow(row) }));
+      .map((row) => ({
+        key: `p-${row.id}`,
+        cells: programToExportRow(row),
+        actions: <ProgramCard program={row} menuOnly />,
+      }));
   }, [programs, preceptor, query]);
 
   const tabs: { id: Tab; label: string }[] = [
@@ -329,12 +336,13 @@ export default function ViewsBrowser({
                 {headers.map((header) => (
                   <th key={header}>{header}</th>
                 ))}
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td className="text-slate-500" colSpan={headers.length + 1}>
+                  <td className="text-slate-500" colSpan={headers.length + 2}>
                     No records match these filters.
                   </td>
                 </tr>
@@ -354,6 +362,7 @@ export default function ViewsBrowser({
                         <PrettyCell value={cell} emphasize={cellIndex === 0} />
                       </td>
                     ))}
+                    <td className="whitespace-nowrap">{row.actions}</td>
                   </tr>
                 ))
               )}

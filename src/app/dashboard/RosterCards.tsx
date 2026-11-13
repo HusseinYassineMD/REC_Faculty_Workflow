@@ -29,42 +29,19 @@ function yesNoValue(value: number | null | undefined) {
   return "";
 }
 
-function PencilIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M16.86 4.49a2.1 2.1 0 1 1 2.97 2.97L8.25 19.04 3.75 20.25l1.21-4.5L16.86 4.49Z" />
-    </svg>
-  );
-}
-
-function TrashIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M9.5 7V5.5h5V7M7 7l.8 12h8.4L17 7" />
-    </svg>
-  );
-}
-
 function CardActions({ label, onEdit, onDelete }: { label: string; onEdit: () => void; onDelete: () => void }) {
   return (
-    <div className="absolute right-3 top-3 z-10 flex gap-1">
-      <button
-        type="button"
-        aria-label={`Edit ${label}`}
-        title="Edit"
-        onClick={onEdit}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-cpbh-navy shadow-sm hover:border-cpbh-gold hover:bg-amber-50"
-      >
-        <PencilIcon />
+    <div className="flex shrink-0 gap-1.5">
+      <button type="button" aria-label={`Edit ${label}`} onClick={onEdit} className="btn-secondary px-2.5 py-1 text-xs">
+        Edit
       </button>
       <button
         type="button"
         aria-label={`Delete ${label}`}
-        title="Delete"
         onClick={onDelete}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-cpbh-navy shadow-sm hover:border-red-200 hover:bg-red-50 hover:text-cpbh-cardinal"
+        className="inline-flex items-center rounded-full border border-red-200 bg-white px-2.5 py-1 text-xs font-semibold text-cpbh-cardinal shadow-sm hover:bg-red-50"
       >
-        <TrashIcon />
+        Delete
       </button>
     </div>
   );
@@ -143,7 +120,7 @@ function FormError({ message }: { message: string }) {
   return <p className="sm:col-span-2 text-sm font-semibold text-cpbh-cardinal">{message}</p>;
 }
 
-export function ScholarCard({ person }: { person: ScholarRow }) {
+export function ScholarCard({ person, menuOnly = false }: { person: ScholarRow; menuOnly?: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<"edit" | "delete" | null>(null);
   const [pending, setPending] = useState(false);
@@ -182,19 +159,27 @@ export function ScholarCard({ person }: { person: ScholarRow }) {
     router.refresh();
   }
 
+  const actions = <CardActions label={title} onEdit={() => setMode("edit")} onDelete={() => setMode("delete")} />;
+
   return (
-    <article className="record-card">
-      <CardActions label={title} onEdit={() => setMode("edit")} onDelete={() => setMode("delete")} />
-      <div className="pr-16">
-        <h3 className="font-display text-lg font-semibold text-cpbh-navy">{title}</h3>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {person.current_or_past?.trim() ? <span className="pill-teal">{person.current_or_past}</span> : null}
-          {person.scholar_or_trainee?.trim() ? <span className="pill-navy">{person.scholar_or_trainee}</span> : null}
-        </div>
-        {person.training_level ? <p className="text-sm font-medium text-slate-700">{person.training_level}</p> : null}
-        {person.research_area ? <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{person.research_area}</p> : null}
-        {person.progress ? <p className="line-clamp-1 text-xs font-semibold text-cpbh-teal">{person.progress}</p> : null}
-      </div>
+    <article className={menuOnly ? "flex justify-end" : "record-card"}>
+      {menuOnly ? (
+        actions
+      ) : (
+        <>
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="font-display text-lg font-semibold text-cpbh-navy">{title}</h3>
+            {actions}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {person.current_or_past?.trim() ? <span className="pill-teal">{person.current_or_past}</span> : null}
+            {person.scholar_or_trainee?.trim() ? <span className="pill-navy">{person.scholar_or_trainee}</span> : null}
+          </div>
+          {person.training_level ? <p className="text-sm font-medium text-slate-700">{person.training_level}</p> : null}
+          {person.research_area ? <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{person.research_area}</p> : null}
+          {person.progress ? <p className="line-clamp-1 text-xs font-semibold text-cpbh-teal">{person.progress}</p> : null}
+        </>
+      )}
       {mode === "delete" ? (
         <DeleteDialog
           title={title}
@@ -333,7 +318,7 @@ export function ScholarCard({ person }: { person: ScholarRow }) {
   );
 }
 
-export function FacultyCard({ person }: { person: FacultyRow }) {
+export function FacultyCard({ person, menuOnly = false }: { person: FacultyRow; menuOnly?: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<"edit" | "delete" | null>(null);
   const [pending, setPending] = useState(false);
@@ -372,22 +357,30 @@ export function FacultyCard({ person }: { person: FacultyRow }) {
     router.refresh();
   }
 
+  const actions = <CardActions label={title} onEdit={() => setMode("edit")} onDelete={() => setMode("delete")} />;
+
   return (
-    <article className="record-card">
-      <CardActions label={title} onEdit={() => setMode("edit")} onDelete={() => setMode("delete")} />
-      <div className="pr-16">
-        <h3 className="font-display text-lg font-semibold text-cpbh-navy">
-          {title}
-          {person.executive_committee ? " *" : ""}
-        </h3>
-        {person.title ? <p className="text-sm font-medium text-slate-700">{person.title}</p> : null}
-        {person.institution_department ? <p className="text-xs text-slate-500">{person.institution_department}</p> : null}
-        <div className="mt-1 flex flex-wrap gap-2">
-          {person.theme ? <span className="pill-navy">{person.theme}</span> : null}
-          {person.executive_committee ? <span className="pill-gold">Executive committee</span> : null}
-        </div>
-        {person.research_area ? <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{person.research_area}</p> : null}
-      </div>
+    <article className={menuOnly ? "flex justify-end" : "record-card"}>
+      {menuOnly ? (
+        actions
+      ) : (
+        <>
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="font-display text-lg font-semibold text-cpbh-navy">
+              {title}
+              {person.executive_committee ? " *" : ""}
+            </h3>
+            {actions}
+          </div>
+          {person.title ? <p className="text-sm font-medium text-slate-700">{person.title}</p> : null}
+          {person.institution_department ? <p className="text-xs text-slate-500">{person.institution_department}</p> : null}
+          <div className="flex flex-wrap gap-2">
+            {person.theme ? <span className="pill-navy">{person.theme}</span> : null}
+            {person.executive_committee ? <span className="pill-gold">Executive committee</span> : null}
+          </div>
+          {person.research_area ? <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{person.research_area}</p> : null}
+        </>
+      )}
       {mode === "delete" ? (
         <DeleteDialog
           title={title}
@@ -460,7 +453,7 @@ export function FacultyCard({ person }: { person: FacultyRow }) {
   );
 }
 
-export function ProgramCard({ program }: { program: ProgramRow }) {
+export function ProgramCard({ program, menuOnly = false }: { program: ProgramRow; menuOnly?: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<"edit" | "delete" | null>(null);
   const [pending, setPending] = useState(false);
@@ -499,18 +492,26 @@ export function ProgramCard({ program }: { program: ProgramRow }) {
     router.refresh();
   }
 
+  const actions = <CardActions label={title} onEdit={() => setMode("edit")} onDelete={() => setMode("delete")} />;
+
   return (
-    <article className="record-card">
-      <CardActions label={title} onEdit={() => setMode("edit")} onDelete={() => setMode("delete")} />
-      <div className="pr-16">
-        <h3 className="font-display text-lg font-semibold text-cpbh-navy">{title}</h3>
-        {program.trainees_per_year ? <p className="text-sm font-medium text-slate-700">{program.trainees_per_year}</p> : null}
-        {program.preceptor ? <p className="text-sm text-slate-600">Preceptor: {program.preceptor}</p> : null}
-        {program.focus ? <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{program.focus}</p> : null}
-        {program.minority_researchers ? (
-          <p className="text-xs text-slate-500">Minority researchers: {program.minority_researchers}</p>
-        ) : null}
-      </div>
+    <article className={menuOnly ? "flex justify-end" : "record-card"}>
+      {menuOnly ? (
+        actions
+      ) : (
+        <>
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="font-display text-lg font-semibold text-cpbh-navy">{title}</h3>
+            {actions}
+          </div>
+          {program.trainees_per_year ? <p className="text-sm font-medium text-slate-700">{program.trainees_per_year}</p> : null}
+          {program.preceptor ? <p className="text-sm text-slate-600">Preceptor: {program.preceptor}</p> : null}
+          {program.focus ? <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{program.focus}</p> : null}
+          {program.minority_researchers ? (
+            <p className="text-xs text-slate-500">Minority researchers: {program.minority_researchers}</p>
+          ) : null}
+        </>
+      )}
       {mode === "delete" ? (
         <DeleteDialog
           title={title}
