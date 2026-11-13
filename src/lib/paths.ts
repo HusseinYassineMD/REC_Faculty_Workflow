@@ -14,4 +14,5 @@ export const SPEAKER_SERIES_INDEX = path.join(
 
 export const LINKS = {
   naccRppr: "https://www.naccdata.org/progress-reports-to-nia/",
+  naccHub: "https://nacc-hub.vercel.app/",
 };

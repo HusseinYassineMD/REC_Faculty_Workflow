@@ -32,8 +32,11 @@ export default function AppShell({
       />
 
       <header className="relative border-b border-white/10">
-        <div className="mx-auto max-w-6xl px-4 pb-6 pt-8 sm:px-6">
-          <div className="flex flex-wrap items-end justify-between gap-6">
+        <div className="mx-auto max-w-6xl px-4 pb-6 pt-6 sm:px-6">
+          <a href={LINKS.naccHub} className="text-sm font-semibold text-white/80 hover:text-white">
+            ← All workflows
+          </a>
+          <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl">
               <p className="pill-gold mb-3">USC ADRC · Research Education Component</p>
               <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">

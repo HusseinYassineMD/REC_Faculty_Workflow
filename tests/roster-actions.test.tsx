@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { FacultyCard, ProgramCard, ScholarCard } from "@/app/dashboard/RosterCards";
+import { FacultyCard, ProgramCard, ScholarCard } from "@/components/RosterCards";
 import ViewsBrowser from "@/app/views/ViewsBrowser";
 import type { FacultyRow, ProgramRow, ScholarRow } from "@/lib/types";
 
@@ -119,6 +119,7 @@ describe("edit and delete controls", () => {
     const globalError = readFileSync("src/app/global-error.tsx", "utf8");
     expect(errorPage).not.toMatch(/127\.0\.0\.1|localhost/);
     expect(globalError).not.toMatch(/127\.0\.0\.1|localhost|npm run dev/);
-    expect(errorPage).toContain("/dashboard");
+    expect(errorPage).toContain("Back to the overview");
+    expect(errorPage).toContain('href="/"');
   });
 });

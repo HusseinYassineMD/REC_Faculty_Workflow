@@ -17,7 +17,7 @@ import {
   yesNoCell,
 } from "@/lib/rppr-standards";
 import type { FacultyRow, ProgramRow, ScholarRow } from "@/lib/types";
-import { FacultyCard, ProgramCard, ScholarCard } from "@/app/dashboard/RosterCards";
+import { FacultyCard, ProgramCard, ScholarCard } from "@/components/RosterCards";
 
 type Tab = "scholars" | "faculty" | "programs";
 
